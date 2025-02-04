@@ -28,6 +28,16 @@ For example:
 
 IMPORTANT: Generate options ONLY for the destination specified in the Trip Details. Do not suggest alternatives for other countries or regions.
 
+For rejected options, you MUST follow these instructions exactly:
+
+When generating new options after a rejection:
+- Your response MUST start with the section header: ## Generated Options
+- Review the previously rejected options
+- Consider the rejection reason carefully
+- Generate 3 NEW options that address the concerns
+- Ensure new options are distinct from rejected ones
+- Explain how each new option addresses the rejection reason
+
 Commands and Their Usage:
 
 /new

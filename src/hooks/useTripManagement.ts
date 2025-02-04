@@ -261,12 +261,10 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
 
   const handleTripOptionReject = useCallback((reason?: string) => {
     if (tripAlternatives) {
+      // Preserve original markdown formatting
+      // Preserve original markdown formatting, but only pass the formatted strings to handleCommand
       const previousAlternatives = tripAlternatives.map(alt => {
-        let text = `**Option: ${alt.title}**\\n${alt.description}`;
-        if (alt.estimatedCost !== undefined) {
-          text += `\\nEstimated cost: $${alt.estimatedCost}`;
-        }
-        return text;
+        return `### Option ${alt.title}\n${alt.description}${alt.estimatedCost !== undefined ? `\nEstimated cost: $${alt.estimatedCost}` : ''}`;
       });
 
       handleCommand('new', content, reason, previousAlternatives);

@@ -155,11 +155,12 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
 
     // Add rejection context if provided
     if (type === 'new' && rejectionNote && alternatives) {
-      formattedCommand += '\n\nPreviously Rejected Alternatives:\n';
-      alternatives.forEach((alt, i) => {
-        formattedCommand += `Option ${i + 1}:\n${alt}\n`;
+      formattedCommand += '\n\n## Previously Rejected Options\n';
+      alternatives.forEach((alt) => {
+        formattedCommand += alt + '\n\n'; // Use the formatted alternative directly
       });
-      formattedCommand += `\nRejection Note: ${rejectionNote}`;
+      formattedCommand += `## Rejection Reason\n${rejectionNote}\n\n`;
+      formattedCommand += `Please generate 3 new options that address this feedback, following the format instructions exactly.`;
     }
 
     // Log for debugging
