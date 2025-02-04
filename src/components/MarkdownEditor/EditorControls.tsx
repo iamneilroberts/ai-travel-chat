@@ -2,7 +2,6 @@ import { FC, useState } from 'react';
 import ModelSelector from '../ModelSelector';
 
 interface EditorControlsProps {
-  onSave: () => void;
   onNewTrip: (model?: string) => void;
   onBuildTrip: (model?: string) => void;
   mode: 'full' | 'split';
@@ -11,7 +10,6 @@ interface EditorControlsProps {
 }
 
 export const EditorControls: FC<EditorControlsProps> = ({
-  onSave,
   onNewTrip,
   onBuildTrip,
   mode,
@@ -31,17 +29,6 @@ export const EditorControls: FC<EditorControlsProps> = ({
   return (
     <div className="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
       <div className="flex items-center space-x-2">
-        <button
-          onClick={onSave}
-          disabled={disabled}
-          className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
-            disabled 
-              ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 cursor-not-allowed'
-              : 'bg-emerald-600 text-white hover:bg-emerald-700'
-          }`}
-        >
-          Save
-        </button>
         <button
           onClick={handleNewTrip}
           disabled={disabled}

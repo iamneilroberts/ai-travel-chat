@@ -34,7 +34,8 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
     chatInput?: string,
     rejectionNote?: string,
     alternatives?: string[],
-    overrideContent?: string
+    overrideContent?: string,
+    detailedPlanRejectionNote?: string
   ) => {
     console.log('Handling command:', { commandType, chatInput, content });
     setProcessingState({ type: commandType });
@@ -80,6 +81,7 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
         systemPrompt,
         undefined,
         rejectionNote,
+        detailedPlanRejectionNote,
         alternatives
       );
 
@@ -262,7 +264,6 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
   const handleTripOptionReject = useCallback((reason?: string) => {
     if (tripAlternatives) {
       // Preserve original markdown formatting
-      // Preserve original markdown formatting, but only pass the formatted strings to handleCommand
       const previousAlternatives = tripAlternatives.map(alt => {
         return `### Option ${alt.title}\n${alt.description}${alt.estimatedCost !== undefined ? `\nEstimated cost: $${alt.estimatedCost}` : ''}`;
       });
@@ -270,6 +271,10 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
       handleCommand('new', content, reason, previousAlternatives);
     }
   }, [content, handleCommand, tripAlternatives]);
+
+  const handleDetailedPlanReject = useCallback(async (detailedPlanRejectionNote: string) => {
+    handleCommand('build', content, undefined, undefined, undefined, detailedPlanRejectionNote);
+  }, [content, handleCommand]);
 
   return {
     processingState,
@@ -283,6 +288,7 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
     debugInfo: lastResponse,
     handleCommand,
     handleTripOptionAccept,
-    handleTripOptionReject
+    handleTripOptionReject,
+    handleDetailedPlanReject
   };
 };

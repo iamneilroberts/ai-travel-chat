@@ -93,6 +93,7 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
     systemPrompt?: string,
     savePath?: string,
     rejectionNote?: string,
+    detailedPlanRejectionNote?: string, // Added for detailed plan rejection
     alternatives?: string[],
     optionNumber?: number
   ): { isValid: boolean; formattedCommand?: string; error?: string; savedPath?: string } {
@@ -161,6 +162,10 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
       });
       formattedCommand += `## Rejection Reason\n${rejectionNote}\n\n`;
       formattedCommand += `Please generate 3 new options that address this feedback, following the format instructions exactly.`;
+    } else if (type === 'build' && detailedPlanRejectionNote) {
+      formattedCommand += '\n\n## Detailed Plan Rejection Reason\n';
+      formattedCommand += `${detailedPlanRejectionNote}\n\n`;
+      formattedCommand += `Please adjust the itinerary based on this feedback, following the format instructions exactly.`;
     }
 
     // Log for debugging

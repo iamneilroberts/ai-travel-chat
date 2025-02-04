@@ -13,6 +13,7 @@ interface EditorProps {
   isProcessing?: boolean;
   mode: 'split' | 'full';
   buildDisabled?: boolean;
+  showActionButtons?: boolean;
 }
 
 export function MarkdownEditor({
@@ -21,7 +22,8 @@ export function MarkdownEditor({
   onCommand,
   isProcessing = false,
   mode,
-  buildDisabled = true
+  buildDisabled = true,
+  showActionButtons = true
 }: EditorProps) {
   const monaco = useMonaco();
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
@@ -105,20 +107,17 @@ export function MarkdownEditor({
     onCommand('build', model);
   }, [onCommand]);
 
-  const handleSave = useCallback(() => {
-    onCommand('save');
-  }, [onCommand]);
-
   return (
     <div className="h-full flex flex-col bg-white dark:bg-gray-800">
-      <EditorControls
-        onSave={handleSave}
-        onNewTrip={handleNewTrip}
-        onBuildTrip={handleBuildTrip}
-        mode={mode}
-        disabled={isProcessing}
-        buildDisabled={buildDisabled}
-      />
+      {showActionButtons && (
+        <EditorControls
+          onNewTrip={handleNewTrip}
+          onBuildTrip={handleBuildTrip}
+          mode={mode}
+          disabled={isProcessing}
+          buildDisabled={buildDisabled}
+        />
+      )}
       <Editor
         height="100%"
         defaultLanguage="markdown"

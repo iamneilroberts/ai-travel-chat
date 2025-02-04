@@ -202,7 +202,9 @@ export class AIClient {
       systemPrompt,
       undefined,
       rejectionNote,
-      alternatives
+      undefined,
+      alternatives,
+      undefined // optionNumber is undefined for new command
     );
 
     if (!isValid || !formattedCommand) {
@@ -218,12 +220,18 @@ export class AIClient {
   static async sendBuildTripCommand(
     content: string,
     systemPrompt: string,
+    detailedPlanRejectionNote?: string, // Added detailedPlanRejectionNote
     model?: string
   ): Promise<AIResponse> {
     const { isValid, formattedCommand, error } = CommandProcessor.processCommand(
       'build',
       content,
-      systemPrompt
+      systemPrompt,
+      undefined, // savePath
+      undefined, // rejectionNote
+      detailedPlanRejectionNote,
+      undefined, // alternatives
+      undefined // optionNumber
     );
 
     if (!isValid || !formattedCommand) {
@@ -233,7 +241,7 @@ export class AIClient {
       };
     }
 
-    return this.sendCommand(formattedCommand, undefined, undefined, model, systemPrompt);
+    return this.sendCommand(formattedCommand, undefined, undefined, detailedPlanRejectionNote, model, systemPrompt);
   }
 
   // Keeping mock response for development/testing

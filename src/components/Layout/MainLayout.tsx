@@ -1,7 +1,6 @@
 import React from 'react';
 import { HeaderSection } from '@/components/Layout/HeaderSection';
 import { ContentSection } from '@/components/Layout/ContentSection';
-import { CollapsibleEditor } from '@/components/CollapsibleEditor';
 import { TripAlternatives } from '@/components/TripAlternatives';
 import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { HtmlPreview } from '@/components/HtmlPreview';
@@ -71,16 +70,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             onCommand('new', chatInput);
           }}
         />
-        <div className="p-2 border-t border-emerald-200/50 dark:border-gray-700">
-          <CollapsibleEditor
-            content={content}
-            onChange={onContentChange}
-            onCommand={onCommand}
-            isProcessing={isProcessing}
-            mode="split"
-            buildDisabled={!content.includes('## Selected Itinerary')}
-          />
-        </div>
       </div>
 
       {/* Modals and Overlays */}
