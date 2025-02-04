@@ -1,6 +1,16 @@
 # Changes Log
 
 2024-02-04:
+- Initialized git repository and renamed project:
+  - Renamed project from "create-ai-travel-assistant" to "ai-travel-chat"
+  - Updated package.json with new project name
+  - Updated README.md with new project name and improved overview
+  - Initialized git repository with initial commit
+  - Set main as default branch
+  - Added proper .gitignore configuration
+
+
+2024-02-04:
 - Enhanced debug window functionality:
   - Improved debug info handling in useTripAlternatives hook
   - Added proper TypeScript types for response state
