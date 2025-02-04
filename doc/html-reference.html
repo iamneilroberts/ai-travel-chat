@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.4;
+            max-width: 800px;
+            margin: 0.75rem auto;
+            padding: 0 0.75rem;
+            color: #333;
+            font-size: 14px;
+        }
+        h1 {
+            color: #2c5282;
+            border-bottom: 2px solid #2c5282;
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        h2 {
+            color: #2d3748;
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.2rem;
+        }
+        .command-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .command-full {
+            grid-column: 1 / -1;
+        }
+        .command-block {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #2c5282;
+            background-color: #edf2f7;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+        .examples-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+        .example {
+            background-color: #f0f9ff;
+            border-left: 4px solid #3182ce;
+            padding: 0.5rem;
+            font-size: 0.9em;
+        }
+        .note {
+            background-color: #fffaf0;
+            border-left: 4px solid #ed8936;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.9em;
+            white-space: pre-line;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Travel Planner Command Reference</h1>
+
+    <div class="command-row">
+        <div>
+            <h2>Core Commands</h2>
+            <div class="command-block">
+                <code>/new</code>, <code>/n</code> - Create new trip<br>
+                <code>/modify</code>, <code>/m</code> - Modify current trip<br>
+                <code>/add</code>, <code>/a</code> - Add item to trip<br>
+                <code>/remove</code>, <code>/r</code> - Remove item<br>
+                <code>/check</code>, <code>/ch</code> - Run validation checks
+            </div>
+
+            <h2>Document Commands</h2>
+            <div class="command-block">
+                <code>/doc proposal</code>, <code>/d p</code> - Formal proposal<br>
+                <code>/doc guide</code>, <code>/d g</code> - Location guide<br>
+                <code>/doc mobile</code>, <code>/d m</code> - Mobile guide<br>
+                <code>/doc text</code>, <code>/d t</code> - Text summary
+            </div>
+        </div>
+
+        <div>
+            <h2>System Commands</h2>
+            <div class="command-block">
+                <code>/mode draft</code> - Switch to draft mode<br>
+                <code>/mode fast</code> - Switch to fast output<br>
+                <code>/debug on/off</code> - Toggle debug output<br>
+                <code>/help</code>, <code>/h</code> - Show this reference
+            </div>
+
+            <h2>Quick Examples</h2>
+            <div class="example">
+                <code>/n</code><br>
+                <code>paris june 1-5, 2 adults</code><br>
+                <code>luxury hotels only, michelin restaurants</code><br>
+                <code>must see louvre eiffel tower versailles</code><br>
+                <code>budget 15000</code><br>
+                <code>/d p</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="command-row">
+        <div class="command-full">
+            <h2>Version Commands</h2>
+            <div class="command-block">
+                <code>/save "description of changes"</code> - Save version with note about what changed<br>
+                <code>/save-as "Alternative Plan"</code> - Save as new version with descriptive name<br>
+                <code>/versions</code> - List saved versions<br>
+                <code>/restore "Plan B"</code> - Switch to different version<br>
+                <code>/drafts</code> - List draft versions<br>
+                <code>/draft "new idea"</code> - Create new draft
+            </div>
+        </div>
+    </div>
+
+    <div class="note">
+        <strong>Notes:</strong> <br> - Commands can use full name or shortcut <br> - Most commands work on current trip without naming it <br> - Use quotes for items with spaces <br> - The system understands natural language - you don't have to use formal commands<br> -- You can enter multiple items in a single line <br> - After freeform input, use /check to validate
+    </div>
+
+</body>
+</html>
