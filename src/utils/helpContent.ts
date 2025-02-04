@@ -1,118 +1,72 @@
-export const welcomeContent = `# 🌍 AI Travel Assistant: Your Personal Trip Planner
+export const welcomeContent = `
+## Welcome to your AI Travel Assistant!
 
-## Share Your Travel Vision
-The AI understands natural language - express yourself freely!
+I can help you plan amazing trips. Just tell me where you'd like to go and for how long, and I'll generate some personalized itinerary options for you.
 
-### Simple Ideas
-- "Weekend in wine country"
-- "Beach vacation in August"
-- "Europe art museum tour"
+**Here are some examples of what you can ask me:**
 
-### Detailed Plans
-25th anniversary trip:
-- Mediterranean coast
-- Boutique hotels
-- Cooking classes
-- Oct, 10 days, ~$8K
+- "Plan a 7-day trip to Japan for cherry blossom season"
+- "Romantic getaway to Paris for a week"
+- "Family vacation in Florida with theme parks"
 
-### Mixed Style
-Tokyo + Kyoto:
-- United 857 SFO->NRT
-- Cherry blossom season
-- Michelin dining
-- Bullet train between
+**Key Features:**
 
-### Things to Try
+- **Itinerary Generation:** I can create detailed day-by-day itineraries based on your preferences.
+- **Option Selection:** Choose from multiple trip options tailored to your interests.
+- **Customization:** Easily modify and update your itinerary as needed.
+- **Markdown Editor:** Use the built-in editor to fine-tune your trip details and notes.
+- **Real-time Preview:** See your itinerary come to life in the preview window.
 
-#### 🎯 Start with Key Details:
-- Destination & dates
-- Number of travelers
-- Budget range
-- Main interests
+**Get Started:**
 
-#### 💡 Refine Your Plan:
-- Request specific activities
-- Adjust pace or schedule
-- Add dietary preferences
-- Include must-see locations
+1. **Enter your trip idea** in the chat input below. Be as specific or as general as you like.
+2. **Click "Send"** to generate your initial trip options.
+3. **Review the generated options** and select the one that best suits you.
+4. **Customize and refine** your itinerary using the editor and chat.
 
-<style>
-.text-gradient {
-  background: linear-gradient(45deg, #10B981, #34D399);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-</style>`;
+Let's start planning your dream vacation! 🌍✈️
+`;
 
-export const tripPlanningHelp = `# 🎯 Trip Planning Guide
-
-## Making the Most of Your Initial Description
-
-### Key Elements to Include
-- **Duration**: Number of days/nights
-- **Travelers**: Number of people, ages, relationships
-- **Budget**: Approximate total or per-person budget
-- **Interests**: Main activities or experiences desired
-- **Timing**: Preferred travel dates or season
-- **Style**: Luxury, budget, adventure, relaxation, etc.
-
-### Example Descriptions
-1. Detailed Example:
-   "Planning a 2-week family trip to Italy in June 2025. We're a family of 4 (parents + kids 10 & 12) interested in history, food, and some outdoor activities. Budget around $8000 excluding flights. Kids are interested in Roman history and pizza making."
-
-2. Simple Example:
-   "Long weekend in New York City for a couple's getaway. Looking for a mix of tourist spots and local experiences. Mid-range budget."
-
-### Tips for Better Results
-- Mention any must-see attractions
-- Note any special requirements (accessibility, dietary needs)
-- Indicate preferred pace (relaxed vs. packed schedule)
-- Highlight any specific experiences you're seeking
-
-## Understanding the Options
-- Each option will offer a different approach to your requirements
-- Compare estimated costs and highlights
-- Consider the unique aspects of each proposal
-- Don't hesitate to request new options if none quite fit`;
-
-export const tripModificationHelp = `# 🔄 Trip Modification Guide
-
-## Refining Your Itinerary
-
-### Effective Modification Requests
-- **Add Activities**: "Add a cooking class in Florence"
-- **Adjust Timing**: "Make mornings less rushed"
-- **Change Accommodations**: "Prefer boutique hotels to large chains"
-- **Update Transportation**: "Use trains instead of flights between cities"
-- **Modify Budget**: "Reduce costs by choosing mid-range restaurants"
-
-### Types of Changes
-1. Schedule Adjustments
-   - Reorder activities
-   - Add free time
-   - Change activity duration
-   - Shift meal times
-
-2. Content Changes
-   - Add new activities
-   - Remove activities
-   - Swap experiences
-   - Update preferences
-
-3. Logistical Updates
-   - Change transportation methods
-   - Modify accommodation choices
-   - Adjust group arrangements
-   - Update meeting points
-
-### Best Practices
-- Be specific about what you want to change
-- Explain your reasons for changes
-- Indicate if timing is flexible
-- Mention any new constraints or preferences
-
-## Working with the AI
-- Changes are applied to the entire itinerary
-- The AI maintains consistency across days
-- Budget impacts are automatically calculated
-- Original preferences are preserved unless specified`;
+export const formatInitialTripDescription = (chatInput: string) => {
+  return [
+    `## Initial Trip Description`,
+    chatInput,
+    '',
+    `## Original Request`,
+    chatInput,
+    '',
+    `## Generated Options`,
+    `### Option 1`,
+    `[Details of first generated option will appear here]`,
+    '',
+    `### Option 2`,
+    `[Details of second generated option will appear here]`,
+    '',
+    `### Option 3`,
+    `[Details of third generated option will appear here]`,
+    '',
+    `## Selected Option`,
+    `[The chosen option and its details will be copied here]`,
+    '',
+    `## Overview`,
+    `[This section will be auto-populated based on the selected option]`,
+    '',
+    `## Travelers`,
+    `[This section will be auto-populated based on the initial description and selected option]`,
+    '',
+    `## Duration & Dates`,
+    `[This section will be auto-populated based on the initial description and selected option]`,
+    '',
+    `## Budget`,
+    `[This section will be auto-populated based on the selected option]`,
+    '',
+    `## Preferences`,
+    `[This section will be auto-populated based on the initial description and selected option]`,
+    '',
+    `## Selected Itinerary`,
+    `[This section will be populated with the expanded details of your chosen option]`,
+    '',
+    `## Trip Notes`,
+    `[Any additional notes or modifications to the trip will be tracked here]`
+  ].join('\n');
+};

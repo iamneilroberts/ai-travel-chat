@@ -96,12 +96,35 @@ export class AIClient {
     return firstChoice.message.content;
   }
 
+  private static cleanContent(content: string): string {
+    // Remove welcome screen content
+    const welcomeScreenStart = '# 🌍 AI Travel Assistant:';
+    const welcomeScreenEnd = '### Things to Try';
+    const welcomeRegex = new RegExp(`${welcomeScreenStart}[\\s\\S]*?${welcomeScreenEnd}[\\s\\S]*?(?=Command:|$)`);
+    return content.replace(welcomeRegex, '').trim();
+  }
+
+  private static extractPromptAndCommand(command: string): { systemPrompt: string; userCommand: string } {
+    const systemPromptMatch = command.match(/^System Prompt:\n(.*?)\n\n/s);
+    if (!systemPromptMatch) {
+      return {
+        systemPrompt: 'You are a helpful AI assistant for travel planning.',
+        userCommand: this.cleanContent(command)
+      };
+    }
+
+    return {
+      systemPrompt: systemPromptMatch[1],
+      userCommand: this.cleanContent(command.replace(/^System Prompt:\n.*?\n\n/s, ''))
+    };
+  }
+
   static async sendCommand(
     command: string,
     rejectionNote?: string,
     alternatives?: string[],
     model: string = this.DEFAULT_MODEL,
-    systemPrompt: string = 'You are an AI Travel Assistant.'
+    systemPrompt?: string
   ): Promise<AIResponse> {
     if (!this.API_KEY) {
       return {
@@ -111,22 +134,36 @@ export class AIClient {
     }
 
     try {
+      const { systemPrompt: extractedPrompt, userCommand } = this.extractPromptAndCommand(command);
+      const finalSystemPrompt = systemPrompt || extractedPrompt;
+
+      // Check content length before sending
+      if (userCommand.length > 12000) { // Conservative limit
+        return {
+          content: '',
+          error: 'Content exceeds maximum length. Please provide a shorter trip description.'
+        };
+      }
+
       const requestBody = {
         model: model,
         messages: [
           {
             role: 'system',
-            content: systemPrompt
+            content: finalSystemPrompt
           },
           {
-            role: 'user',
-            content: command
+            role: 'user', 
+            content: userCommand
           }
         ],
         max_tokens: 4000,
         temperature: 0.7,
         top_p: 0.9
       };
+
+      // Store the raw request for debugging
+      console.log('Raw API request:', requestBody);
 
       const response = await fetch(this.OPENROUTER_API_URL, {
         method: 'POST',
@@ -212,7 +249,7 @@ export class AIClient {
       };
     }
 
-    return this.sendCommand(formattedCommand, rejectionNote, alternatives, model, systemPrompt);
+    return this.sendCommand(formattedCommand, rejectionNote, alternatives, model);
   }
 
   static async sendBuildTripCommand(
@@ -233,7 +270,7 @@ export class AIClient {
       };
     }
 
-    return this.sendCommand(formattedCommand, undefined, undefined, model, systemPrompt);
+    return this.sendCommand(formattedCommand, undefined, undefined, model);
   }
 
   // Keeping mock response for development/testing

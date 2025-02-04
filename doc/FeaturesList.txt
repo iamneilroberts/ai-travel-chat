@@ -1,0 +1,24 @@
+Ai-travel-chat features 
+Choose option
+Reject option 
+Change from chat 
+Change from editor
+Good itin html preview 
+Web verify
+Sanity report
+Explain
+Verify single site 
+Travel docs with themes and chat adjust 
+Agent to verify avail 
+Agent to verify ratings
+Viator api: pull local copy
+Trip based search 
+Direct viator search 
+Other travel vendors?
+Agent to find lodging
+Agent to find flights and cars etc 
+Existing lang chain or other api travel tool use ?
+Agent to search cruises 
+Social media scraper
+Travel bargain finder
+

@@ -8,11 +8,25 @@ import { useErrorHandlers } from '@/utils/errorHandling';
 import { welcomeContent } from '@/utils/helpContent';
 
 export default function Home() {
-  const [content, setContent] = useState(welcomeContent);
-  const [originalContent, setOriginalContent] = useState(welcomeContent);
+  const [content, setContent] = useState('');
+  const [originalContent, setOriginalContent] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [pageError, setPageError] = useState<Error | null>(null);
   const { isDark } = useTheme();
+
+  useEffect(() => {
+    console.log('Content state in page.tsx:', content);
+  }, [content]);
+
+  // Prevent commands if system prompt is not set
+  const validateCommand = useCallback(() => {
+    if (!systemPrompt) {
+      setCommandError('Please wait for system prompt to load');
+      return false;
+    }
+    return true;
+  }, [systemPrompt]);
 
   const {
     processingState,
@@ -29,7 +43,7 @@ export default function Home() {
     handleTripOptionReject
   } = useTripManagement({
     content,
-    systemPrompt: '',
+    systemPrompt,
     setContent
   });
 
@@ -87,9 +101,16 @@ export default function Home() {
       tripAlternatives={tripAlternatives}
       lastResponse={lastResponse}
       debugInfo={debugInfo}
-      onPromptChange={() => {}} // Handled by PromptSelector internally
-      onContentChange={setContent}
-      onCommand={handleCommand}
+      onPromptChange={(prompt: string) => {
+        console.log('System prompt updated:', prompt);
+        setSystemPrompt(prompt);
+      }}
+      onContentChange={(newContent: string) => setContent(newContent)}
+      onCommand={(type, chatInput) => {
+        if (validateCommand()) {
+          handleCommand(type, chatInput);
+        }
+      }}
       onTripOptionAccept={handleTripOptionAccept}
       onTripOptionReject={handleTripOptionReject}
       onTripOptionCancel={() => setTripAlternatives(null)}

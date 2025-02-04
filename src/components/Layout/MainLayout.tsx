@@ -27,7 +27,7 @@ interface MainLayoutProps {
   debugInfo: any;
   onPromptChange: (prompt: string) => void;
   onContentChange: (content: string) => void;
-  onCommand: (commandType: CommandType) => void;
+  onCommand: (commandType: CommandType, chatInput?: string) => void;
   onTripOptionAccept: (option: TripOption, optionNumber: number) => void;
   onTripOptionReject: (reason?: string) => void;
   onTripOptionCancel: () => void;
@@ -67,9 +67,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           isDark={isDark}
           isProcessing={isProcessing}
           debugInfo={debugInfo}
-          onContentSubmit={(text: string) => {
-            onContentChange(text);
-            onCommand('new');
+          onContentSubmit={(chatInput: string) => {
+            onCommand('new', chatInput);
           }}
         />
         <div className="p-2 border-t border-emerald-200/50 dark:border-gray-700">
@@ -143,6 +142,24 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                 markdown={commandResult}
                 style={{ mode: isDark ? 'dark' : 'light' }}
               />
+            </div>
+            {/* Debug Info */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <details className="text-sm">
+                <summary className="cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                  Debug Info
+                </summary>
+                <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-900 rounded">
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300">Raw Request:</h4>
+                  <pre className="mt-1 p-2 bg-white dark:bg-gray-800 rounded text-xs whitespace-pre-wrap overflow-auto max-h-40">
+                    {lastResponse?.rawRequest}
+                  </pre>
+                  <h4 className="mt-4 font-semibold text-gray-700 dark:text-gray-300">Raw Response:</h4>
+                  <pre className="mt-1 p-2 bg-white dark:bg-gray-800 rounded text-xs whitespace-pre-wrap overflow-auto max-h-40">
+                    {JSON.stringify(lastResponse?.rawResponse, null, 2)}
+                  </pre>
+                </div>
+              </details>
             </div>
             <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
               <button

@@ -8,7 +8,6 @@ export interface Command {
   systemPrompt?: string;
   savePath?: string;
   optionNumber?: number;
-  tripDetails?: string;
 }
 
 export interface CommandResult {
@@ -65,26 +64,95 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
     return ['new', 'select', 'build', 'update', 'save'].includes(type);
   }
 
+  private static extractTripDetails(content: string): string {
+    // Find the /new command
+    const commandIndex = content.lastIndexOf('Command: /new');
+    if (commandIndex === -1) {
+      return '';
+    }
+
+    // Get everything before the command
+    let tripDetails = content.substring(0, commandIndex).trim();
+
+    // Remove welcome screen content if present
+    const welcomeScreenStart = '# 🌍 AI Travel Assistant:';
+    const welcomeScreenEnd = '### Things to Try';
+    const welcomeRegex = new RegExp(`${welcomeScreenStart}[\\s\\S]*?${welcomeScreenEnd}`);
+    tripDetails = tripDetails.replace(welcomeRegex, '').trim();
+
+    // Remove any HTML style tags
+    tripDetails = tripDetails.replace(/<style>[\s\S]*?<\/style>/g, '').trim();
+
+    return tripDetails;
+  }
+
   private static validateContent(content: string): { isValid: boolean; error?: string } {
-    if (!content.trim()) {
+    // First check if the command exists
+    const commandIndex = content.lastIndexOf('Command: /new');
+    if (commandIndex === -1) {
+      return { isValid: false, error: 'Missing /new command' };
+    }
+
+    const tripDetails = this.extractTripDetails(content);
+    console.log('Extracted trip details:', tripDetails);
+
+    if (!tripDetails) {
       return { isValid: false, error: 'No trip details found in the request' };
     }
 
-    if (content.length > 12000) {
+    if (tripDetails.length > 12000) {
       return { isValid: false, error: 'Trip details exceed maximum length. Please provide a shorter description.' };
+    }
+
+    // Validate that trip details come before command
+    const detailsBeforeCommand = content.indexOf(tripDetails) < commandIndex;
+    if (!detailsBeforeCommand) {
+      return { isValid: false, error: 'Trip details should come before the /new command' };
     }
 
     return { isValid: true };
   }
 
-  private static parseSection(content: string, section: string): string | undefined {
-    // Try with ## prefix first
-    const withPrefix = content.match(new RegExp(`## ${section}\\n([\\s\\S]*?)(?=\\n##|$)`))?.[1]?.trim();
-    if (withPrefix) return withPrefix;
-    
-    // Fall back to without prefix
-    const withoutPrefix = content.match(new RegExp(`${section}:\\n([\\s\\S]*?)(?=\\n\\w+:|$)`))?.[1]?.trim();
-    return withoutPrefix;
+  private static formatCommandForAI(
+    type: CommandType,
+    content: string,
+    systemPrompt?: string,
+    rejectionNote?: string,
+    alternatives?: string[],
+    optionNumber?: number
+  ): string {
+    if (!systemPrompt) {
+      throw new Error('System prompt is required');
+    }
+
+    // Validate content first
+    const validation = this.validateContent(content);
+    if (!validation.isValid) {
+      throw new Error(validation.error);
+    }
+
+    // Extract trip details after validation
+    const tripDetails = this.extractTripDetails(content);
+    console.log('Formatting command with trip details:', tripDetails);
+
+    let formattedCommand = `System Prompt:\n${systemPrompt}\n\n`;
+
+    // Add trip details followed by command
+    formattedCommand += `${tripDetails}\n\nCommand: /new\n\n`;
+
+    // For rejected alternatives, include the context
+    if (type === 'new' && rejectionNote && alternatives) {
+      formattedCommand += 'Previously Rejected Alternatives:\n';
+      alternatives.forEach((alt, i) => {
+        formattedCommand += `Option ${i + 1}:\n${alt}\n`;
+      });
+      formattedCommand += `\nRejection Note: ${rejectionNote}\n\n`;
+    }
+
+    // Add the command
+    formattedCommand += `Command: /${type}${optionNumber ? ` ${optionNumber}` : ''}`;
+
+    return formattedCommand;
   }
 
   static processCommand(
@@ -104,15 +172,6 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
       };
     }
 
-    // Validate content
-    const validation = this.validateContent(content);
-    if (!validation.isValid) {
-      return {
-        isValid: false,
-        error: validation.error
-      };
-    }
-
     // Validate option number for select command
     if (type === 'select' && (!optionNumber || optionNumber < 1 || optionNumber > 3)) {
       return {
@@ -121,54 +180,15 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
       };
     }
 
-    // Start with system prompt
-    let formattedCommand = `System Prompt:\n${systemPrompt || ''}\n\n`;
-
-    // Add command-specific content
-    if (type === 'new') {
-      formattedCommand += `Command: /${type}\n\n`;
-      formattedCommand += `Initial Trip Request:\n${content}`;
-    } else if (type === 'build') {
-      // For build command, parse and include both initial description and selected option
-      const initialDescription = this.parseSection(content, 'Initial Trip Description');
-      const selectedOption = this.parseSection(content, 'Selected Option');
-      
-      if (!initialDescription || !selectedOption) {
-        console.error('Failed to parse build command sections:', { content });
-        return {
-          isValid: false,
-          error: 'Missing required sections for build command'
-        };
-      }
-
-      formattedCommand += `Command: /build\n\n`;
-      formattedCommand += `## Initial Trip Description\n${initialDescription}\n\n`;
-      formattedCommand += `## Selected Option\n${selectedOption}`;
-    } else {
-      formattedCommand += `Command: /${type}`;
-      if (optionNumber) {
-        formattedCommand += ` ${optionNumber}`;
-      }
-      formattedCommand += `\n\n`;
-      formattedCommand += `Current Trip Details:\n${content}`;
-    }
-
-    // Add rejection context if provided
-    if (type === 'new' && rejectionNote && alternatives) {
-      formattedCommand += '\n\nPreviously Rejected Alternatives:\n';
-      alternatives.forEach((alt, i) => {
-        formattedCommand += `Option ${i + 1}:\n${alt}\n`;
-      });
-      formattedCommand += `\nRejection Note: ${rejectionNote}`;
-    }
-
-    // Log for debugging
-    console.log('Command Input:', {
-      type: type,
-      userInput: content,
-      systemPrompt: systemPrompt
-    });
-    console.log('Formatted Output:', formattedCommand);
+    // Format the command with content
+    const formattedCommand = this.formatCommandForAI(
+      type,
+      content,
+      systemPrompt,
+      rejectionNote,
+      alternatives,
+      optionNumber
+    );
 
     return {
       isValid: true,

@@ -53,8 +53,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       };
 
       setMessages(prev => [...prev, userMessage, aiMessage]);
-      // Only send the user's input
-      onSubmit(inputText.trim());
+      // Format input with trip details followed by command
+      const formattedInput = `${inputText}\n\nCommand: /new`;
+      onSubmit(formattedInput);
       setInputText('');
     }
   };

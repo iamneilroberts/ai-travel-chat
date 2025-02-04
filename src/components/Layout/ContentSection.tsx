@@ -18,6 +18,7 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   debugInfo,
   onContentSubmit
 }) => {
+  console.log('ContentSection content prop:', content);
   return (
     <div className="flex-1 flex flex-col lg:flex-row min-h-0">
       {/* Left column - Chat interface */}
@@ -33,7 +34,7 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
       {/* Right column - Preview area */}
       <div className="flex-1 p-2 flex flex-col min-h-0">
         <HtmlPreview
-          markdown={content.includes('## Selected Itinerary') ? content : welcomeContent}
+          markdown={content}
           style={{ mode: isDark ? 'dark' : 'light' }}
         />
       </div>
