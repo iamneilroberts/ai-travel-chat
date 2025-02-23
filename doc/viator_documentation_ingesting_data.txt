@@ -1,0 +1,775 @@
+Ingesting and updating the product catalogue
+
+The recommended way to initialize and keep your local copy of our products database up-to-date is by using the /products/modified-since endpoint in the following way:
+Initialize your local copy of our products database by ingesting all product records
+
+Make a request to /products/modified-since, but only include the count parameter. Do not supply values for modified-since or cursor. This instructs the system to return any products modified since the beginning of time; i.e., all of them.
+
+Note: This is the only occasion on which you will need to call /products/modified-since without the modified-since or cursor parameter.
+
+count specifies how many product records will be returned per page. For practical purposes, setting count to its maximum value (500) is advised. However, for the purposes of brevity, I am using a count of 5 in this example; i.e.:
+
+GET https://api.sandbox.viator.com/partner/products/modified-since?count=5
+
+You will receive a response similar to the following:
+
+{
+    "products": [
+        {
+            "status": "ACTIVE",
+            "productCode": "92457P4",
+            "language": "en-US",
+            "createdAt": "2020-06-16T12:49:29.519174Z",
+            "lastUpdatedAt": "2020-11-08T16:26:16Z",
+            "title": "Ecuador Parapente Quito",
+            "ticketInfo": {
+                "ticketTypes": [
+                    "MOBILE_ONLY"
+                ],
+                "ticketTypeDescription": "Mobile or paper ticket accepted",
+                "ticketsPerBooking": "ONE_PER_BOOKING",
+                "ticketsPerBookingDescription": "One per booking"
+            },
+            "pricingInfo": {
+                "type": "PER_PERSON",
+                "ageBands": [
+                    {
+                        "ageBand": "INFANT",
+                        "startAge": 6,
+                        "endAge": 17,
+                        "minTravelersPerBooking": 0,
+                        "maxTravelersPerBooking": 4
+                    },
+                    {
+                        "ageBand": "ADULT",
+                        "startAge": 18,
+                        "endAge": 60,
+                        "minTravelersPerBooking": 0,
+                        "maxTravelersPerBooking": 4
+                    }
+                ]
+            },
+            "images": [
+                {
+                    "imageSource": "SUPPLIER_PROVIDED",
+                    "caption": "",
+                    "isCover": true,
+                    "variants": [...
+                    ],
+            "logistics": {
+                "start": [
+                    {
+                        "location": {
+                            "ref": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq"
+                        },
+                        "description": "The meeting point is on the way to Lumbisí km 1 at the entrance to La Primavera at 8:30 am."
+                    }
+                ],
+                "end": [
+                    {
+                        "location": {
+                            "ref": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq"
+                        },
+                        "description": "The meeting point is on the way to Lumbisí km 1 at the entrance to La Primavera at 8:30 am."
+                    }
+                ],
+                "redemption": {
+                    "redemptionType": "NONE",
+                    "specialInstructions": ""
+                },
+                "travelerPickup": {
+                    "pickupOptionType": "MEET_EVERYONE_AT_START_POINT",
+                    "allowCustomTravelerPickup": true
+                }
+            },
+            "timeZone": "America/Guayaquil",
+            "description": "the only legal paragliding operator in ecuador. See an amazing view of Quito and its surroundings from above.",
+            "inclusions": [
+                {
+                    "category": "OTHER",
+                    "categoryDescription": "Other",
+                    "type": "OTHER",
+                    "typeDescription": "Other",
+                    "otherDescription": "Paragliding Kit"
+                },
+                {
+                    "category": "OTHER",
+                    "categoryDescription": "Other",
+                    "type": "OTHER",
+                    "typeDescription": "Other",
+                    "otherDescription": "Air-conditioned vehicle"
+                }
+            ],
+            "additionalInfo": [
+                {
+                    "type": "STROLLER_ACCESSIBLE",
+                    "description": "Infants and small children can ride in a pram or stroller"
+                },
+                {
+                    "type": "NO_PREGNANT",
+                    "description": "Not recommended for pregnant travelers"
+                },
+                {
+                    "type": "NO_HEART_PROBLEMS",
+                    "description": "Not recommended for travelers with poor cardiovascular health"
+                },
+                {
+                    "type": "PHYSICAL_EASY",
+                    "description": "Suitable for all physical fitness levels"
+                }
+            ],
+            "cancellationPolicy": {
+                "type": "STANDARD",
+                "description": "For a full refund, cancel at least 24 hours before the scheduled departure time.",
+                "cancelIfBadWeather": true,
+                "cancelIfInsufficientTravelers": false,
+                "refundEligibility": [
+                    {
+                        "dayRangeMin": 1,
+                        "percentageRefundable": 100
+                    },
+                    {
+                        "dayRangeMin": 0,
+                        "dayRangeMax": 1,
+                        "percentageRefundable": 0
+                    }
+                ]
+            },
+            "bookingConfirmationSettings": {
+                "bookingCutoffType": "FIXED_TIME",
+                "bookingCutoffInMinutes": 1440,
+                "confirmationType": "INSTANT",
+                "bookingCutoffFixedTime": "16:00:00"
+            },
+            "bookingRequirements": {
+                "minTravelersPerBooking": 1,
+                "maxTravelersPerBooking": 4,
+                "requiresAdultForBooking": false
+            },
+            "bookingQuestions": [
+                "FULL_NAMES_LAST",
+                "PASSPORT_EXPIRY",
+                "PASSPORT_PASSPORT_NO",
+                "SPECIAL_REQUIREMENTS",
+                "FULL_NAMES_FIRST",
+                "WEIGHT",
+                "AGEBAND",
+                "HEIGHT",
+                "PASSPORT_NATIONALITY"
+            ],
+            "tags": [
+                20234
+            ],
+            "destinations": [
+                {
+                    "ref": "735",
+                    "primary": true
+                }
+            ],
+            "itinerary": {
+                "itineraryType": "ACTIVITY",
+                "skipTheLine": false,
+                "privateTour": true,
+                "duration": {
+                    "fixedDurationInMinutes": 15
+                },
+                "activityInfo": {
+                    "location": {
+                        "ref": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq"
+                    },
+                    "description": "We take off from the hill of Lumbisi towards the City, we observe the landscape of the city of Quito you can observe the mountains. We landed at the foot of the hill.\n\nThe meeting point is on the way to Lumbisí km 1 at the entrance to La Primavera at 8:30 am. From there we got on a vehicle to the mountain. "
+                }
+            },
+            "productOptions": [
+                {
+                    "productOptionCode": "TG1",
+                    "description": "",
+                    "title": "Ecuador Parapente Quito"
+                }
+            ],
+            "translationInfo": {
+                "containsMachineTranslatedText": false
+            },
+            "supplier": {
+                "name": "Opeturmo - Parapente Montanita"
+            }
+        },
+        {
+            "status": "INACTIVE",
+            "productCode": "141567P21",
+            "language": "en-US",
+            "createdAt": "2019-10-08T13:12:21.535614Z",
+            "lastUpdatedAt": "2020-11-13T13:41:18Z"
+        },
+        {
+            "status": "INACTIVE",
+            "productCode": "8932P17",
+            "language": "en-US",
+            "createdAt": "2019-06-03T13:29:09.131851Z",
+            "lastUpdatedAt": "2020-11-13T13:42:38Z"
+        },
+        {
+            "status": "INACTIVE",
+            "productCode": "58593P53",
+            "language": "en-US",
+            "createdAt": "2020-11-13T13:46:39.927509Z",
+            "lastUpdatedAt": "2020-11-13T13:51:43Z"
+        },
+        {
+            "status": "INACTIVE",
+            "productCode": "164413P1",
+            "language": "en-US",
+            "createdAt": "2019-06-14T00:29:29.039245Z",
+            "lastUpdatedAt": "2020-11-13T14:22:08Z"
+        }
+    ],
+    "nextCursor": "MTYwNTI3NzMyOHwxNjQ0MTNQMXxJTkFDVElWRQ=="
+}
+
+The example above gives the first five product records in the catalogue, with modification dates in chronological order. Note that products with a "status" of "INACTIVE" are products that have been temporarily disabled by the supplier and are therefore unavailable – when this is the case, all other requests for this product should be avoided.
+
+Included in the response is the nextCursor element, which contains an identification code that points to the next page of product records; i.e.:
+
+"nextCursor": "MTYwNTI3NzMyOHwxNjQ0MTNQMXxJTkFDVElWRQ=="
+
+In your next call to /products/modified-since, provide the value of nextCursor in the cursor parameter to get the next page of results:
+
+GET https://api.sandbox.viator.com/partner/products/modified-since?count=500&cursor=MTYwNTI3NzMyOHwxNjQ0MTNQMXxJTkFDVElWRQ==
+
+The response will be similar to the initial response shown above, except it will contain the next 500 product records and a new nextCursor that points to the following page, and so on.
+
+Continue calling /products/modified-since using the nextCursor value in the cursor parameter to retrieve all pages of results. You will eventually receive a response that contains an empty products array and does not contain a nextCursor element. The absence of the nextCursor element indicates that you have, for the time being, reached the end of the list and have received all product records from our catalogue.
+
+Example final page response
+
+{
+    "products": []
+}
+
+Periodically update your product records
+
+Now that you have all product records from our catalogue, you can keep it up-to-date by periodically polling the service using the most-recent nextCursor code you received. Regardless of how frequently you call /products/modified-since, you will always receive all product update information so long as you keep track of the last cursor you received and use that in your subsequent call.
+
+You should never need to re-ingest the entire product catalogue unless you need to re-initialize your database. This may happen frequently during development, but never (or rarely) in production. Due to the large volume of data, we strongly recommend keeping it to a minimum.
+
+Products are considered updated when the supplier makes any changes to the product's details, excluding pricing and availability changes, which are retrieved from the availability schedules endpoints.
+
+When the supplier publishes their product detail updates, the modified product /products/modified-since service will respond to this same call with newly-modified products in the products array and a new nextCursor element with which to poll the service for future updates in the same way.
+
+It would be reasonable to poll this service on an hourly basis, updating those records in your local copy of the product catalogue as they become available.
+
+Note that the nextCursor code is valid indefinitely; it will not expire.
+Filtering out products
+
+You are free to choose which products to store on your system and sell. As the product content endpoints return all available products, you will need to perform the filtering step yourself at the time of ingestion. If a product contains attributes that you do not desire; e.g., the type of product, where it operates, etc., simply discard the update and do not add it to your database.
+Filtering out manual-confirmation products
+
+Unless you have established the required functionality on your site to sell manual confirmation products you will need to exclude all non-instant confirmation products from your catalogue.
+
+Instant confirmation products can be identified by the value of bookingConfirmationSettings.confirmationType being "INSTANT" in the response product content response; e.g.:
+
+"bookingConfirmationSettings": {
+  "bookingCutoffType": "CLOSING_TIME",
+  "bookingCutoffInMinutes": 0,
+  "confirmationType": "INSTANT"
+}
+
+Products wih a confirmationType of "MANUAL" or "INSTANT_THEN_MANUAL" should be excluded if you do not wish to sell manual confirmation products.
+
+Please note:
+
+    The product catalog must be ingested and updated using the /products/modified-since endpoint, unless you are only selling a relatively small subset of the products available in the Viator catalog. If that is the case, you may prefer to use the /products/bulk endpoint to ingest your selected products.
+
+    Important: the /products/{product-code} endpoint should not be used for bulk ingestion purposes. Your product ingestion/update strategy is one of our certification requirements and must be verified by us prior to your accessing the production server. To find out what our certification requirements are, see: Viator Merchant API Certification.
+
+Resolving references
+
+Some information in the product content response is not communicated explicity; but rather, by reference, and therefore requires an extra de-referencing step to acquire the full details of the element.
+
+These data types comprise:
+
+    locations
+    destinations
+    tags
+
+The following sections describe how to de-reference these elements using the API.
+Location references
+
+All locations within the product content response are given as a location reference; e.g.:
+
+ "activityInfo": {
+    "location": {
+        "ref": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq"
+    },
+
+These location references can be resolved using the /locations/bulk endpoint; for example:
+
+Request:
+
+{
+  "locations": [
+    "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq",
+    "LOC-6eKJ+or5y8o99Qw0C8xWyK8Z2imHSU8Ozi+NYupJVyI="
+  ]
+}
+
+Response:
+
+{
+  "locations": [
+    {
+      "provider": "GOOGLE",
+      "reference": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq",
+      "providerReference": "ChIJS1UFbTyX1ZER0vTgCLKWCEQ"
+    },
+    {
+      "provider": "TRIPADVISOR",
+      "reference": "LOC-6eKJ+or5y8o99Qw0C8xWyK8Z2imHSU8Ozi+NYupJVyI=",
+      "name": "Valley of the Roses",
+      "address": {
+        "street": "Dades Valley, near Bouteghrar",
+        "administrativeArea": "El Kelaa M'gouna",
+        "country": "Morocco",
+        "countryCode": "MA",
+        "postcode": "43000"
+      },
+      "center": {
+        "latitude": 34.00061,
+        "longitude": -6.84494
+      }
+    }
+  ]
+}
+
+Note that there are two different location information providers, "TRIPADVISOR" and "GOOGLE", referring to locations in the Tripadvisor location database or locations provided by the Google Maps platform via the Google Places API, respectively.
+
+Tripadvisor locations include full details of the location in the response from /locations/bulk, including address and geolocation information. However, you will need to use the Google Places API to retrieve details for Google Maps locations.
+
+The purpose of referring to locations by reference is to avoid the unnecessary transmission of duplicate data, as multiple products may include the same location reference. Therefore, we recommend caching the data received from this endpoint, checking this first to see if a particular location's details have been retrieved by your system in the past before making a request to /locations/bulk.
+
+Requests can be made to /locations/bulk asynchronously; e.g., during the content ingestion process.
+Destination references
+
+Every product in the Viator catalogue is categorized according to the destination/locale in which it operates.
+
+There are multiple kinds of destination, which includes cities, regions, countries and others
+
+Example destinations*:
+type 	destinationId 	destinationName
+CITY 	343 	Bangkok
+COUNTRY 	749 	Panama
+COUNTY 	51632 	Xiahe County
+DISTRICT 	51921 	Hunza
+HAMLET 		
+ISLAND 	51220 	Syros
+NATIONAL PARK 	51196 	Death Valley National Park
+NEIGHBORHOOD 	60465 	Kensington
+PENINSULA 	51769 	Michamwi
+PROVINCE 	51255 	Mendoza Province
+REGION 	4431 	Northern China
+STATE 		
+TOWN 	50971 	Swansea
+UNION TERRITORY 	51542 	Daman and Diu
+VILLAGE 	51011 	Pyrgos
+WARD 	52140 	Shibuya
+
+    Notes: The examples above are subject to change. These are all currently supported destination types, though for some there are no live examples at the moment
+
+Every product has one or more destinations associated with it by way of its destination reference. This is given in the destinations object in the response from any of the product content endpoints; e.g.:
+
+"destinations": [
+  {
+    "ref": "34198",
+    "primary": true
+  }
+],
+
+To de-reference destination identifiers, you must use our destination taxonomy, which can be retrieved from the /destinations endpoint.
+
+You may wish to filter products according to destination.
+
+A call to /destinations will return data for all available destinations. You must store a local copy of this mapping information, as destination data does not change frequently – i.e., new destinations are rarely added. On-demand updates can be done in the event you encounter a product associated to a destination reference for which you do not have the details.
+
+Example snippet of destination taxonomy:
+
+{
+  "destinationId": 34198,
+  "name": "Seminyak",
+  "type": "CITY",
+  "parentDestinationId": 98,
+  "lookupId": "2.15.98.34198",
+  "defaultCurrencyCode": "IDR",
+  "timeZone": "Asia/Makassar",
+  "center": {
+    "latitude": -8.68877,
+    "longitude": 115.161267
+  }
+},
+{
+  "destinationId": 901,
+  "name": "Buenos Aires",
+  "type": "CITY",
+  "parentDestinationId": 22280,
+  "lookupId": "9.78.22280.901",
+  "destinationUrl": "https://shop.live.rc.viator.com/x/d901-ttd?mcid=42383&pid=P00108950&medium=api&api_version=2.0",
+  "defaultCurrencyCode": "ARS",
+  "timeZone": "America/Argentina/Buenos_Aires",
+  "iataCode": "BUE",
+  "center": {
+    "latitude": -34.6084175,
+    "longitude": -58.3731613
+  }
+},
+...
+
+Note that destinations are organized into a hierarchy. The destination's position in the hierarchy can be determined according to the parentDestinationId and lookupId fields.
+
+In the second example above, Buenos-Aires is a "CITY", and it has a parentDestinationId of 22280, which is the destinationId of "The Pampas" – the "REGION" in South America where Buenos-Aires is located.
+
+The destination's full lineage with respect to the hierarchy is given in lookupId, which is a series of destination ids separated by periods - in this case:
+
+  "lookupId": "9.78.22280.901"
+
+Component 	Destination name 	Destination type
+9 	(unnamed) 	(broad continental designation)
+78 	Argentina 	"COUNTRY"
+22280 	The Pampas 	"REGION"
+901 	Buenos-Aires 	"CITY"
+
+Using this information, you are able to categorize each product into its geographical location for display and search purposes.
+Tag references
+
+Each product is also categorized according to its content, features or theme. Each attribute has a corresponding identifier called a 'tag'. The tag references for each product are contained in the tags array, in the response from any of the product content endpoints.
+
+Example tags array (product 250380P1 – Surf lessons Bali, Canggu):
+
+
+"tags": [
+  20246,
+  21946,
+  20244
+],
+
+These numeric tag identifiers can be de-referenced using information available from the /products/tags endpoint. This service takes no parameters and retrieves information for all available tags.
+
+To learn more about tags, see this article: Viator tags, explained
+
+We recommend you store a local copy of this information, as tags do not change frequently. It is only necessary to re-ingest from this endpoint in the event you encounter a product that references a tag for which you do not have the details.
+
+As with destinations, tags are organized into a hierarchy. A tag's relative position within that hierarchy can be determined by tracing back through its parent tag ids, which (if the tag has any) are listed in its parentTagIds element. Each tag can have multiple parent tags, and each tag can eventually be traced back to its parent. Parent tags are tags that have no parents; i.e., they are at the top of the hierachy.
+
+For example, tag: 20244 (Sports Lessons) in /products/tags response:
+
+{
+  "tagId": 20244,
+  "parentTagIds": [
+      21478,
+      21909,
+      21915
+  ],
+  "allNamesByLocale": {
+      "de": "Sportkurse",
+      "no": "Treningskurs",
+      "sv": "Idrottslektioner",
+      "pt": "Aulas de esportes",
+      "en_AU": "Sports Lessons",
+      "en": "Sports Lessons",
+      "it": "Lezioni di sport",
+      "fr": "Cours de sport",
+      "en_UK": "Sports Lessons",
+      "es": "Sesiones deportivas",
+      "zh": "运动课",
+      "zh_HK": "體育課程",
+      "zh_TW": "運動課程",
+      "ja": "スポーツ教室",
+      "zh_CN": "运动课",
+      "da": "Sportsundervisning",
+      "nl": "Sportlessen"
+  }
+},
+
+The parentTagIds for 20244 - Sports lessons are:
+
+    21478 – "Active & Outdoor Classes"
+    21909 – "Outdoor Activities"
+    21915 – "Classes & Workshops"
+
+These three tags have no parent tags, and are therefore at the top of the hierarchy. Applying this same process to the other tags in the tags array, we can determine the full set of tags for this product, in this case:
+
+    21909 – "Outdoor Activities"
+        21478 – "Active & Outdoor Classes"
+            20244 - "Sports lessons"
+    21915 – "Classes & Workshops"
+    21946 – "Good for avoiding crowds"
+    21442 – "On the water"
+        20246 – "Surfing lessons"
+
+By traversing the hierarchy in this way, we have surfaced seven tags that pertain to this product with different levels of generality; i.e. it is an 'active and outdoor class', and it is a 'sports lesson'. More generally, it is an 'outdoor activity', a class or workshop, and is 'good for avoiding crowds':
+
+In this way, you can categorize products for search and recommendation purposes, or to create category display and search buttons as seen on viator.com 'things to do' pages; e.g.:
+
+tag categories on viator.com
+Ingesting and updating availability schedules
+
+Availability schedule information for all products is available to be ingested and updated via the /availablity/schedules/modified-since endpoint. This endpoint functions in a similar manner to the /products/modified-since endpoint; i.e., an initial call is made that returns all availability data in bulk, and then calls are made periodically to that same endpoint, which will return a delta update.
+
+Therefore, to initialize your local copy of our availability schedule information, make a call to /availability/schedules/modified-since, including only the count query parameter, which we recommend setting to 500.
+
+For the sake of brevity, in the following example, count is set to 5
+
+Example request
+
+GET https://api.viator.com/partner/availability/schedules/modified-since?count=5
+
+You will receive a response similar to the following:
+
+{
+    "availabilitySchedules": [
+        {
+            "productCode": "3320STOLZadvaft",
+            "bookableItems": [
+                {
+                    "seasons": [
+                        {
+                            "startDate": "2020-11-23",
+                            "endDate": "2020-12-22",
+                            "pricingRecords": [
+                                {
+                                    "daysOfWeek": [
+                                        "WEDNESDAY",
+                                        "THURSDAY",
+                                        "FRIDAY",
+                                        "SATURDAY",
+                                        "SUNDAY"
+                                    ],
+                                    "timedEntries": [
+                                        {
+                                            "startTime": "15:30"
+                                        }
+                                    ],
+                                    "pricingDetails": [
+                                        {
+                                            "pricingPackageType": "PER_PERSON",
+                                            "minTravelers": 1,
+                                            "ageBand": "INFANT",
+                                            "price": {
+                                                "original": {
+                                                    "recommendedRetailPrice": 0.00,
+                                                    "partnerNetPrice": 0.00,
+                                                    "bookingFee": 0.00,
+                                                    "partnerTotalPrice": 0.00
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "pricingPackageType": "PER_PERSON",
+                                            "minTravelers": 1,
+                                            "ageBand": "ADULT",
+                                            "price": {
+                                                "original": {
+                                                    "recommendedRetailPrice": 17.20,
+                                                    "partnerNetPrice": 11.50,
+                                                    "bookingFee": 0.69,
+                                                    "partnerTotalPrice": 12.19
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "currency": "EUR"
+        },
+        {
+            "productCode": "14093P1",
+            "bookableItems": [],
+            "currency": "EUR"
+        },
+        {
+            "productCode": "3567AKL_SAF",
+            "bookableItems": [],
+            "currency": "NZD"
+        },
+        {
+            "productCode": "5855RIPLEYS",
+            "bookableItems": [],
+            "currency": "USD"
+        },
+        {
+            "productCode": "3033ENTRY_TR",
+            "bookableItems": [],
+            "currency": "USD"
+        }
+    ],
+    "nextCursor": "MTU3ODA2Njc4NnwzMDMzRU5UUllfVFI="
+}
+
+The endpoint returns an array (availabilitySchedules) where each item contains all availabilty schedule information for a single product, and a cursor (nextCursor) that is to be used in subsequent calls to this endpoint to retrieve the next page of results.
+
+For details on how to interpret the availability schedule object, see Availability schedules.
+
+Note: An empty bookableItems array means that the product indicated by productCode is not active, has no availability, and therefore cannot be booked. This fact will be reflected if the product details are requested from the /products/{product-code} endpoint; e.g., for product 3033ENTRY_TR:
+
+{
+    "status": "INACTIVE",
+    "productCode": "3033ENTRY_TR",
+    "language": "en",
+    "createdAt": "2006-05-01T07:00:00Z"
+}
+
+Pagination
+
+As with the /products/modified-since endpoint, you will receive as many records as requested via the count request parameter. Included in the response is the nextCursor element, which contains a code that points to the next page of availability records.
+
+After receiving this first response, your next request to the /availablity/schedules/modified-since service should include the value of nextCursor in the cursor request parameter; i.e.:
+
+GET https://api.sandbox.viator.com/partner/availability/schedules/modified-since?count=5&cursor=MTU3ODA2Njc4NnwzMDMzRU5UUllfVFI=
+
+The response will be similar to the initial response shown above, except it will contain the next count number of availability schedule records and a new nextCursor that points to the following page.
+
+Loop through this process until you receive a response that contains an empty availabilitySchedules array and does not contain a nextCursor element. The absence of the nextCursor element indicates that you have, for the time being, reached the end of the list and your availability information is fully up-to-date.
+
+Example final page response
+
+{
+    "availabilitySchedules": []
+}
+
+Periodically update your availability information
+
+Once your availability schedule information ingestion is complete, you can keep it up-to-date by periodically polling the service using the latest nextCursor code you received; i.e., from the page prior to the final, empty page.
+
+If new availability schedule information is available, the service will respond with new availability information in the availabilitySchedules array and a new nextCursor element with which to poll the service for future updates in the same way. Note that the nextCursor code is valid indefinitely; it will not expire.
+
+As with the /products/modified-since endpoint, we recommend polling this service on an hourly basis. The longer the interval between updates, the more likely your availability information will be out of date, raising the likelihood of availability differences when you make a real-time availability check using the /availability/check service.
+
+Again, you should only need to call /availablity/schedules/modified-since without a cursor parameter once, for the first call of the initial ingestion. All future calls should include the cursor parameter and the results used to update your database.
+Filtering out availability schedules
+
+As you may not be offering Viator's full product catalogue for sale on your site, you are only required to store availability information for the products you support. Therefore, if you are filtering out products from our catalogue, you should also perform a check with regard to the availability schedule information received from the /availablity/schedules/modified-since to ensure that it pertains to a product in your catalogue.
+
+This can be done by checking the productCode field in the ProductAvailabilitySchedule object response.
+
+Please note:
+
+    The availability and pricing schedules must be ingested and updated using the /availability/schedules/modified-since endpoint, unless you are only selling a relatively small subset of the products available in the Viator catalog. If that is the case, you may prefer to use the /availability/schedules/bulk endpoint to ingest your selected product availability schedules.
+
+    Important: the /availability/schedules/{product-code} endpoint should not be used for bulk ingestion purposes. Your availability schedule ingestion/update strategy is one of our certification requirements and must be verified by us prior to your accessing the production server. To find out what our certification requirements are, see: Viator Merchant API Certification.
+
+Update frequency
+
+We expect that your update frequency will not be more frequent than the following guidelines. More frequent updates will place an excessive burden on our systems and may result in your integration being shut off.
+
+See section on Rate Limiting for more information.
+Fixed-cadence delta updates
+
+In order to keep your local databases up-to-date without placing an excessive burden on our servers, we expect you use the following fixed cadences at which you should poll the content-ingestion endpoints:
+Endpoint 	Update cadence
+/products/modified-since 	Every 15-30 minutes following initial ingestion
+/availability/schedules/modified-since 	Every 15-30 minutes following initial ingestion
+/bookings/modified-since 	Every 5-10 minutes following initial ingestion
+/bookings/modified-since/acknowledge 	Right after ingesting the booking modifications
+Fixed-cadence full updates
+
+To ensure your systems reflect any removals of or changes to existing destinations, locations or booking questions, we expect that you retrieve full updates from these endpoints as follows:
+Endpoint 	Update cadence
+/destinations 	Weekly
+/attractions/search 	Weekly
+/products/booking-questions 	Monthly
+/products/tags 	Weekly
+/locations/bulk 	Monthly
+/reviews/product 	Weekly
+/bookings/cancel-reasons 	Monthly
+/suppliers/search/product-codes 	Weekly
+/bookings/status 	Hourly
+/exchange-rates 	Daily
+On-demand updates
+
+When ingesting product content, in the event that you encounter an unknown reference – i.e., a new location reference, booking question, tag or destination id – or, if you need to perform a currency conversion for which the last exchange rate you retrieved has expired, we expect you to call the relevant endpoint to resolve the new reference immediately or just after completing the product content update.
+Endpoint 	When to update
+/exchange-rates 	Whenever you encounter a currency that you need to convert, but the last-retrieved exchange-rate for that currency-pair is no longer valid due to having expired (according to the expiry value in the response from this endpoint)
+/locations/bulk 	Whenever you encounter a location reference code that you do not yet have the details for (we recommend retrieving location details in batches using this endpoint; therefore, the retrieval of new location data can commence after all new product content is retrieved)
+/products/tags 	Whenever you encounter a tag reference code that you do not yet have the details for
+/destinations 	Whenever you encounter a destination id that you do not yet have the details for
+/products/booking-questions 	Whenever you encounter a booking question identifier that you do not yet have the details for
+/attractions/{attraction-id} 	Whenever you encounter an attraction identifier that you do not yet have the details for
+/reviews/product 	If the number of reviews available for a product, which is reported in the reviews.totalReviews element in the product content response, has changed compared with its previous value, the reviews for that product should also be refreshed by calling the /reviews/product endpoint. We request that you rate-limit your use of this service to 30 requests per minute.
+/bookings/status 	Whenever you encounter a booking waiting for manual confirmation. Must not be called more than once every 3 minutes.
+Rate limiting
+
+We impose rate limits on the usage of this API to prevent excessive demands being made of our system that might otherwise affect its availability for all users.
+
+Our methodology involves applying a rate-limit on a per-endpoint / per-PUID (Partner Unique ID) basis; therefore, reaching the rate-limit with respect to your usage of one endpoint will only affect the availablility of that endpoint, not the others.
+
+We do not have a universal rate limit that applies to all users. The rate limit you are required to operate within is based on a standard commensurate with the scale of your operation.
+
+This is to say that if the volume of traffic to your site is such that under normal conditions your operations are causing you to frequently receive HTTP 429 (Too Many Requests) responses, you can ask for your rate-limit to be increased. If that is the case, please speak to your account manager to discuss whether increasing your rate limit would be the appropriate solution.
+Interpreting the HTTP 429 response
+
+If a request to an endpoint yields an HTTP 429 (Too Many Requests) response, information regarding your present usage status can be located in the following four header fields:
+
+    RateLimit-Limit
+        Total limit of requests for this endpoint per rolling 10s time window
+    RateLimit-Remaining:
+        The number of requests that remain available to you in the present 10s period
+    RateLimit-Reset:
+        How long (in seconds) from the present moment it would take for the number of available requests to reach its maximum value
+    Retry-After:
+        A recommendation regarding how long (in seconds) it would be optimal to wait before making a subsequent call to that endpoint
+
+Example HTTP 429 response:
+
+HTTP/1.1 429
+...
+..
+RateLimit-Limit: 16
+RateLimit-Remaining: 0
+RateLimit-Reset: 10
+Retry-After: 10
+...
+..
+ 
+{ 
+  "code":"TOO_MANY_REQUESTS",
+  "message":"Too many requests, please try again",
+  "timestamp":"2022-09-13T13:25:26.179433Z",
+  "trackingId":"4badb933-ad65-4464-ae9c-c20e4a70c0d2"
+}
+
+This can interpreted as:
+
+RateLimit-Limit: 16
+
+    You can make 16 requests to this endpoint per 10s rolling time window
+
+RateLimit-Remaining: 0
+
+    You have no remaining requests available in the current 10s epoch (as you would expect, since it is for this reason that you are receiving this response in the first place)
+
+RateLimit-Reset: 10
+
+    If you were to wait 10s, your RateLimit-Remaining value would reach its maximum; which, in this case, is 16 requests
+
+Retry-After: 10
+
+    It is recommended you pause for 10s before re-attempting to call this endpoint
+
+Note that these rate-limit-related values will also be returned in the HTTP 200 (success) response. Inspect these values if you wish to estimate whether your method of implementing this API will remain sustainable at scale.
+Concurrency-based rate limiting
+
+While rate-limiting is imposed per API key, if our system reaches its capacity on account of high demand overall, you may be rate limited even though you have not personally exceeded your individual rate limit.
+
+In this case, you will receive a HTTP 503 (Service Unavailable) response. The header of this response will include the Retry-After field. In the example below, the recommendation is to pause for 60s before retrying the request: e.g.:
+
+HTTP/1.1 503
+...
+..
+Retry-After: 60
+...
+..
+ 
+{"code":"SERVICE_UNAVAILABLE","message":"Service is currently unavailable, please try again","timestamp":"2022-09-13T08:52:48.693734Z","trackingId":"fc342644-e48f-4fd9-96e3-a6860607d405"}
+

@@ -1,0 +1,122 @@
+products/search
+
+Returns a list of filtered, ordered and sorted product summaries for products that match the given search criteria. This endpoint must not be used to ingest the catalog of products, the /products/modified-since endpoint must be used for that purpose.
+
+If you’re a Basic Access Affiliate Partner, this endpoint provides all the essential functionality that you need to implement in order to use the Viator API. The following article describes how to do this in the most efficient way: Golden Path – Basic Access Affiliate Partners.
+
+Note: At present, only active products are returned
+Authorizations:
+API-key
+query Parameters
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in productUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+target-lander	
+string
+
+Affiliate partners only: Specifies the type of landing page customers will be shown when opening the link provided in the productUrl field.
+
+Ordinarily, when customers follow the link in productUrl, they are redirected to a sales-conversion-optimized affiliate landing page. This default behavior can be disabled by setting this parameter to "NONE", which will modify the productUrl query string such that when opened, the customer will instead land on the standard viator.com product display page, which is not optimized for affiliate-link sales.
+
+Available values:
+
+    "NONE": Causes target_lander=NONE to be included in the productUrl query string, which will disable redirection to an affiliate landing page when the link is followed.
+
+Our recommendation is for you to allow the default behavior by not including this parameter, unless you have a specific technical or business requirement to do so.
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Request Body schema: application/json;version=2.0
+required
+	
+object (ProductSearchFiltering)
+
+Only return products that match all the criteria provided here.
+object (ProductSearchSorting)
+
+How the search results will be sorted
+object (ProductSearchPagination)
+
+Pagination details specifying which search results to return based on start position and item count
+currency
+required
+	
+string <currency>
+
+Currency code for all prices provided in the request; and, the currency in which all pricing will be denominated in the response.
+
+One of:
+
+    "AUD"
+    "BRL"
+    "CAD"
+    "CHF"
+    "DKK"
+    "EUR"
+    "GBP"
+    "HKD"
+    "INR"
+    "JPY"
+    "NOK"
+    "NZD"
+    "SEK"
+    "SGD"
+    "TWD"
+    "USD"
+    "ZAR"
+
+Note: The currency you display to your users may not be the currency they see when they click through to the viator.com site. Instead, they will see the default currency for the locale from which they are accessing the site.
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+required
+	
+Array of objects (ProductSummary)
+
+List of products matching the filtering criteria, sorted and paginated as specified in the request
+totalCount	
+integer
+
+Total number of products matching the filtering criteria – these may be accessed via multiple calls to this service using the pagination feature.
+

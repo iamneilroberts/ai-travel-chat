@@ -1,0 +1,146 @@
+/products/modified-since
+
+Get full product details for all products modified since a specified time. Initiate a full ingestion only to establish your local copy; this should be a rare occurrence compared to regular updates. Fetch incremental updates through this endpoint on an hourly basis. You are welcome to poll for updates as frequently as every 15 minutes if desired. Be mindful that excessive frequency beyond these recommendations may trigger rate limits.
+
+Note:
+
+    See Ingesting and updating the product catalogue for instructions on how to use this service to ingest the full product catalogue and ensure that it remains up-to-date.
+    The response object utilizes polymorphism and differs markedly depending on whether the product is active or inactive. Click the drop-down selector in the status description to toggle between an "ACTIVE" and "INACTIVE" product response.
+
+Examples:
+
+Get all products in the Viator inventory with 500 products per response page:
+
+GET https://api.sandbox.viator.com/partner/products/modified-since?count=500
+
+Get the next page of results:
+
+GET https://api.sandbox.viator.com/partner/products/modified-since?count=500&cursor=MTU3NDA0MzU1NQ==
+
+Alternative pagination method (not recommended); e.g., if you have misplaced the cursor value or if for any other reason you wish to get all products modified since 2019-09-17T03:20:45.737043Z:
+
+GET https://api.sandbox.viator.com/partner/products/modified-since?count=500&modified-since=2020-09-30T00%3A00%3A01.737043Z
+
+(Response sample generated on: 2020-10-06)
+Authorizations:
+API-key
+query Parameters
+cursor	
+string
+
+Pagination cursor received from a previous call to this endpoint that points to the desired starting point for the results.
+
+Note: Pagination will come into play when the number of results exceeds the figure given in the count parameter. In this case, pass the content of the nextCursor element for the value of cursor to receive the next page of results. The final page of results will not include the nextCursor element. For more information, see: Ingesting and updating the product catalogue.
+
+    Example: 'MTU3NDA0MzU1NQ=='
+
+count
+required
+	
+integer [ 1 .. 500 ]
+
+Specifies the maximum number of product detail items to be returned in each response from this endpoint
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in productUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+target-lander	
+string
+
+Affiliate partners only: Specifies the type of landing page customers will be shown when opening the link provided in the productUrl field.
+
+Ordinarily, when customers follow the link in productUrl, they are redirected to a sales-conversion-optimized affiliate landing page. This default behavior can be disabled by setting this parameter to "NONE", which will modify the productUrl query string such that when opened, the customer will instead land on the standard viator.com product display page, which is not optimized for affiliate-link sales.
+
+Available values:
+
+    "NONE": Causes target_lander=NONE to be included in the productUrl query string, which will disable redirection to an affiliate landing page when the link is followed.
+
+Our recommendation is for you to allow the default behavior by not including this parameter, unless you have a specific technical or business requirement to do so.
+modified-since	
+string <date-time> ^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])...
+
+Only return products that have been modified since the date and time (UTC) specified by this timestamp
+
+Note:
+
+    As this is a query parameter, colons (i.e., :) in the timestamp should be URL-encoded as %3A; e.g.: "2020-09-30T00%3A00%3A01.737043Z"
+    Using this parameter is not recommended as the standard pagination method; rather, use the cursor parameter to ensure all product updates are captured during ingestion.
+
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+required
+	
+Array of objects (Product)
+
+Products that fall within the search/filter criteria
+nextCursor	
+string
+
+Pagination cursor pointing to the next page of results
+
+    Example: "MTU3NDA0NDczOQ=="
+
+Response samples
+
+    200400401403404429500503
+
+Content type
+application/json;version=2.0
+{
+
+    "products": 
+
+[
+
+{},
+{},
+
+        {}
+    ],
+    "nextCursor": "MTYyMjQ0MjM5N3wyNTkyNjlQMXxJTkFDVElWRQ=="
+
+}

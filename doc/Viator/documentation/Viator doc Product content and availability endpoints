@@ -1,0 +1,25 @@
+-- Product content and availability endpoints
+Product content and availability endpoints
+Product content endpoints
+
+You can retrieve the core product-content details from the following endpoints:
+
+    /products/{product-code}: Retrieve content for a single product in real time when the product is selected by the customer
+        Used by: API partners who do not ingest the product database, but instead get each product's details only when required
+    /products/modified-since: Retrieve content for all products with filtering according to modification date
+        Used by: API partners who ingest the entire product catalog into a local database and perform regular delta updates via this endpoint to keep their local data in-sync with Viator's
+    /products/bulk: Retrieve content for multiple products, as specified in the request.
+        Please note: This endpoint must not be used for ingestion; rather, it should only be used to retrieve product details for the selected products when needed.
+
+Availability schedules endpoints
+
+You can retrieve the availability schedules for products using the following endpoints:
+
+    /availability/schedules/{product-code}: Retrieve availability schedules for a single product in real time when the product is selected by the customer.
+        Used by: API partners who do not ingest the availability database, but instead get the availability schedules associated with a product at the time that it is required
+    /availability/schedules/modified-since: Retrieve future availability schedules for all products with filtering according to modification date
+        Used by: API partners who ingest all availability schedules into a local database and perform regular delta updates via this endpoint to keep their local data in-sync with Viator's
+    /availability/schedules/bulk: Retrieve availability schedules for all products specified in the request.
+        Please note: This endpoint must not be used for ingestion; rather, it should only be used to retrieve the availability schedules for the selected products when needed.
+
+

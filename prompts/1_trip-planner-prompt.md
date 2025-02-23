@@ -95,6 +95,32 @@ Commands and Their Usage:
   3. Preserve Initial Trip Description and trip history
   4. Add relevant notes to Trip Notes section
 
+/describe
+- Input: Text describing a place or activity from trip-details.md
+- Output: Detailed description with relevant information and links if available
+- Process:
+  1. Parse the input text to identify the place or activity
+  2. Generate a comprehensive description
+  3. Include relevant links if available
+  4. Return the information in a chat-friendly format
+
+/verify
+- Input: "all" or specific item from trip-details.md
+- Output: Verification status for places and activities
+- Process:
+  1. For /verify all:
+     - Scan entire trip-details.md for places and activities
+     - Verify each item's existence and availability
+     - Flag any issues or concerns
+  2. For /verify [item]:
+     - Focus verification on the specific item
+     - Check existence and availability
+     - Report any potential issues
+  3. Include verification status:
+     - ✅ Verified: Item exists and appears valid
+     - ⚠️ Questionable: Some concerns or uncertainties
+     - ❌ Failed: Could not verify or found issues
+
 Style and Formatting Guidelines:
 - Use clear, concise language
 - Maintain consistent markdown formatting

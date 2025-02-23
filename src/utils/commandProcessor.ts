@@ -1,6 +1,6 @@
 import { Change } from './diffGenerator';
 
-export type CommandType = 'new' | 'select' | 'build' | 'update' | 'save';
+export type CommandType = 'new' | 'select' | 'build' | 'update' | 'save' | 'describe' | 'verify';
 
 export interface Command {
   type: CommandType;
@@ -62,7 +62,7 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
 [Any additional notes or modifications to the trip will be tracked here]`;
 
   private static validateCommand(type: string): boolean {
-    return ['new', 'select', 'build', 'update', 'save'].includes(type);
+    return ['new', 'select', 'build', 'update', 'save', 'describe', 'verify'].includes(type);
   }
 
   private static validateContent(content: string): { isValid: boolean; error?: string } {
@@ -145,6 +145,9 @@ Enter your initial trip idea or requirements here. This can be as brief or detai
       formattedCommand += `Command: /build\n\n`;
       formattedCommand += `## Initial Trip Description\n${initialDescription}\n\n`;
       formattedCommand += `## Selected Option\n${selectedOption}`;
+    } else if (type === 'describe' || type === 'verify') {
+      formattedCommand += `Command: /${type}\n\n`;
+      formattedCommand += content;
     } else {
       formattedCommand += `Command: /${type}`;
       if (optionNumber) {

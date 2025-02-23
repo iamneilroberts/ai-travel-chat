@@ -1,9 +1,29 @@
 # Changes Log
 
 2025-02-23:
+- Simplified Viator tour data model to resolve schema issues:
+  - Removed problematic JSONB[] array for images
+  - Removed optional JSON fields (schedule, itinerary, reviewsData)
+  - Added default values for required fields
+  - Updated TypeScript types and Prisma schema
+  - Modified ViatorClient and ingestion script to match simplified schema
+  - Created new migration for schema changes
+
+- Enhanced Viator tour data model with more comprehensive fields:
+  - Added support for detailed location information
+  - Included tour images, inclusions, exclusions
+  - Added booking information and review data
+  - Implemented region-based filtering for tours
+  - Enhanced ViatorClient with more robust API interaction methods
+- Updated Prisma schema to support new tour data structure
+- Refactored ViatorClient to handle more complex tour data retrieval
+- Improved test script for Viator API integration
+- Added more detailed error handling in API calls
+- Implemented region determination for tours
+- Enhanced type definitions for tour-related data
+
 - Implemented Viator tour recommendations feature:
   - Added Prisma with PostgreSQL for tour data storage
-  - Improved Viator API test output formatting for better readability
   - Created Tour model and database schema
   - Implemented Viator API client for fetching tour data
   - Added tour ingestion script for bulk data import
@@ -33,7 +53,6 @@
   - Added visual feedback for focus states
   - Maintained proper whitespace formatting
   - Improved overall editing experience
-
 
 2024-02-04:
 - Fixed trip options handling:

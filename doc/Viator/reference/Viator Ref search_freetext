@@ -1,0 +1,73 @@
+search/freetext
+
+Perform a search for products, attractions and/or destinations that contain a free-text search term. Product results can be filtered and sorted according to various criteria. This endpoint must not be used to ingest the catalog of products, the /products/modified-since endpoint must be used for that purpose.
+
+Note: Only active products are returned in the response from this endpoint.
+Authorizations:
+API-key
+query Parameters
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in productUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+target-lander	
+string
+
+Target lander page for affiliate productUrl
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en, en-AU
+
+Specifies the language into which the natural-language fields in the response from this service will be translated.
+Request Body schema: application/json
+searchTerm
+required
+	
+string
+
+Return results that contain this free-text search term
+object (FreetextSearchProductFiltering)
+
+Criteria by which to filter product search results (i.e., when searchTypes includes "PRODUCTS")
+object (FreetextSearchProductSorting)
+
+Specify the sorting method for product results (i.e., when searchTypes includes "PRODUCTS")
+required
+	
+Array of objects (SearchType) [ 1 .. 3 ] items
+
+Specifies the domain(s) in which to search for the searchTerm and the respective pagination details for each type of search results
+currency
+required
+	
+string <currency>
+
+Currency code of price range in request filter and the prices in response.
+
+One of: "AUD", "BRL", "CAD", "CHF", "DKK", "EUR", "GBP", "HKD", "INR", "JPY", "NOK", "NZD", "SEK", "SGD", "TWD", "USD", "ZAR".'
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+Response Schema: application/json;version=2.0
+object
+
+Destinations that include the searchTerm when "DESTINATIONS" results are requested via searchTypes
+object
+
+Attractions that include the searchTerm when "ATTRACTIONS" results are requested via searchTypes
+object
+
+Products that include the searchTerm when "PRODUCTS" results are requested via searchTypes
+

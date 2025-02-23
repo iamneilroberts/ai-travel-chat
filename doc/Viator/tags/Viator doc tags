@@ -1,0 +1,478 @@
+
+Viator tags, explained
+
+Dec 9, 2021 | Affiliate API, Basic Access, Full Access, Merchant API, Travel Commerce Partners
+What are tags & why they matter
+
+Tags are numeric identifiers used to categorize products. For example, tags allow you to distinguish walking tours and bus tours from other sightseeing tours. There are a variety of functions beyond categorization that tags offer and can be used creatively to fit the needs of your integration with Viator. Because all products have tags, they can be used to include or exclude products.
+
+Simply put, tags offer customization and flexibility to your integration that cannot be achieved otherwise. In this article, we’ll cover many of the use cases for and benefits of using tags.
+
+ 
+Quick find
+
+    Working with tags in the API
+    Tag structure, explained
+    Best practices
+    Product search by tags
+
+    Mapping v1 categories to v2 tags
+    Updating tags
+    Additional resources
+
+ 
+
+ 
+Here are some examples of different types of tags
+
+Tags are unique and are not defined for a single use case. For example, you’ll notice that some tags align closely with product categories (e.g. helicopter tours), while others align closely with product features  (e.g. Wi-Fi available).
+
+Tags related to product categories, for example:
+
+    tagId 12026 – Helicopter Tours
+    tagId 13018 – Bike Tours
+    tagId 21765 – Shows
+
+Product quality tags, for example:
+
+    tagId 21972 – Excellent Quality
+    tagId 22143 – Best Conversion
+    tagId 21074 – Unique experiences
+
+Tags used to highlight specific product features, for example:
+
+    tagId 11283 – Mountain View
+    tagId 19089 – Squash Off-site
+    tagId 9176 – Free Wifi
+
+Tags indicating the target group of participants:
+
+    tagId 18884 – Adults Only
+    tagId 11919 – Kid-Friendly
+    tagId 20222 – LGBT Friendly Tours
+
+Tags linked to a specific area or a popular tourist attraction, for example:
+
+    tagId 11982 – Cinque Terre Day Trips from Milan
+    tagId 11960 – Western Caribbean Shore Excursions
+    tagId 11999 – Rome To Siena
+
+Tags for special occasions, for example:
+
+    tagId 11892 – Christmas
+    tagId 11893 – Halloween
+    tagId 21583 – Chinese New Year
+
+Safety measures tags, for example:
+
+    tagId 21949 – Face masks required for guides in public areas
+    tagId 21956 – Guides required to regularly wash hands
+    tagId 21955 – Transportation vehicles regularly sanitized
+
+Tags indicating tour/activity time frame, for example:
+
+    tagId 13121 – Afternoon tea
+    tagId 11922 – Multi-day Tours
+    tagId 18953 – Evening Entertainment
+
+Please note:
+Tags are available only in v2 API. If you are using the v1 version of the API, you will need to rely on v1 categories and subcategories that have a more narrow structure and refer to product categories only.
+Working with tags in the API
+
+Each product has at least one tag returned in the response to product content endpoints.
+
+In order to verify details of each tag, it’s necessary to use the /products/tags endpoint – it returns tag details in all supported languages (listed here).
+Tags are grouped in hierarchical order with the use of tagIds and parentTagIds.
+
+Please note:
+It’s not necessary to use all Viator tags returned in the API. You can create your own hierarchy of tags and map Viator tags to pre-existing categories in their system. The recommendation is to use as many tags within reason for search and filtering purposes, so that you can offer the best experience to your travelers..
+
+An example of the API response to /products/{product-code} for product 5516ST5:
+
+“tags”: [
+
+21957,
+22045,
+21953,
+21958,
+11953,
+12026,
+21956,
+21951,
+21971,
+21955,
+21949,
+21959,
+21954,
+11938,
+21948,
+12057,
+21860,
+21950,
+21972
+
+],
+Tag structure
+
+Tags have a “mesh” like structure: conceptually they are not organized in a tree like formation but instead each child tag can have multiple parents. Additionally, their parent tags themselves can have multiple parents. This provides an abundance of flexibility in the way a product can be merchandised.
+Example 1
+
+1a. tagId: 22046 (Adventure Tours) is linked to two parentTagIds: 21725 and 21913.
+
+{
+
+“tagId”: 22046,
+“parentTagIds”: [
+
+21725,
+21913
+
+],
+“allNamesByLocale”: {
+
+“de”: “Abenteuertouren”,
+“no”: “Spenningsturer”,
+“sv”: “Äventyrsturer”,
+“pt”: “Excursões de aventura”,
+“ko”: “어드벤처 투어”,
+“en_AU”: “Adventure Tours”,
+“en“: “Adventure Tours”,
+“it”: “Tour avventurosi”,
+“fr” “Circuits aventure”,
+“en_UK”: “Adventure Tours”,
+“es”: “Tours de aventura”,
+“zh”: “探险之旅”,
+“zh_HK”: “探险之旅”,
+“zh_TW”: “冒險遊覽”,
+“ja”: “アドベンチャーツアー”,
+“zh_CN”: “探险之旅”,
+“da”: “Oplevelsesture”,
+“nl”: “Avontuurlijke tours”
+
+}
+
+},
+
+1b. In order to check the details of the parentTagId 21725, it’s necessary to search for it in the /products/tags response.
+
+{
+
+“tagId”: 21725,
+“parentTagIds”: [
+
+21913
+
+],
+“allNamesByLocale”: {
+
+“de”: “Sightseeingtouren”,
+“no”: “Sightseeing-turer”,
+“sv”: “Sightseeing-turer”,
+“pt”: “Passeios turísticos”,
+“ko”: “관광 투어”,
+“en_AU”: “Sightseeing Tours”,
+“en”: “Sightseeing Tours”,
+“it”: “Giri turistici”,
+“fr”: “Visites guidées”,
+“en_UK”: “Sightseeing Tours”,
+“es”: “Tours turísticos”,
+“zh”: “观光游览”,
+“zh_HK”: “观光游览”,
+“zh_TW”: “觀光遊覽”,
+“ja”: “観光ツアー”,
+“zh_CN”: “观光游览”,
+“da”: “Sightseeing”,
+“nl”: “Sightseeingtours”
+
+}
+
+},
+
+1c. tagId 21725 also has a parent – tagId 21913, which is not linked to any other parent tag which means that tagId 21913 is one of the main parent tags.
+
+{
+
+“tagId”: 21913,
+“allNamesByLocale”: {
+
+“de”: “Touren, Sightseeing und Bootsfahrten”,
+“no”: “Turer, sightseeing og cruise”,
+“sv”: “Rundturer, sightseeing och kryssningar”,
+“pt”: “Excursões, passeios turísticos e cruzeiros”,
+“ko”: “투어 관광, 크루즈”,
+“en_AU”: “Tours, Sightseeing & Cruises”,
+“en”: Tours, Sightseeing & Cruises”,
+“it”: “Tour, giri turistici e crociere”,
+“fr”: “Circuits et croisières”,
+“en_UK”: “Tours, Sightseeing & Cruises”,
+“es”: “Tours, visitas turísticas y cruceros”,
+“zh”: “游览、观光活动与邮轮之旅”,
+“zh_HK”: “遊覽團、觀光活動與郵輪之旅”,
+“zh_TW”: “遊覽、觀光和郵輪”,
+“ja”: “ツアー、観光、クルーズ”,
+“zh_CN”: “游览、观光活动与邮轮之旅”,
+“da”: “Ture, sightseeing og krydstogter”,
+“nl”: “Tours, bezienswaardigheden en cruises”
+
+}
+
+},
+
+Based on that, we can see the following hierarchy:
+
+    tagId 21913 (Tours, Sightseeing & Cruises) – main parent tag
+    tagId 21725 (Sightseeing tours)
+    tagId 22046 (Adventure Tours)
+
+Example 2
+
+This chart illustrates the correlation between tags from the example below:
+Seasonal & Special Occasions tag structure
+
+2a. tagId 11892 (Christmas) has two parents: 21584 (Holidays), 21916 (Seasonal & Special Occasions)
+
+{
+
+“tagId”: 11892,
+“parentTagIds”: [
+
+21584,
+21916
+
+],
+“allNamesByLocale”: {
+
+“de”: “Weihnachten”,
+“no”: “Jul”,
+“sv”: “Jul”,
+“pt”: “Natal”,
+“ko”: “크리스마스”,
+“en_AU”: “Christmas”,
+“en”: “Christmas”,
+“it”: “Natale”,
+“fr”: “Noël”,
+“en_UK”: “Christmas”,
+“es”: “Navidad”,
+“zh”: “圣诞节”,
+“zh_HK”: “聖誕節”,
+“zh_TW”: “聖誕節”,
+“ja”: “クリスマス”,
+“zh_CN”: “圣诞节”,
+“da”: “Jul”,
+“nl”: “Kerstmis”
+
+}
+
+},
+
+2b. We can see that tagId 21916 (Seasonal & Special Occasions) is the parent tag for tagId 21584 (Holidays):
+
+{
+
+“tagId”: 21584,
+“parentTagIds”: [
+
+21916
+
+],
+“allNamesByLocale”: {
+
+“de”: “Feiertage”,
+“no”: “Ferier”,
+“sv”: “Helger”,
+“pt”: “Férias”,
+“ko”: “휴일”,
+“en_AU”: “Holidays”,
+“en”: “Holidays”,
+“it”: “Vacanze”,
+“fr”: “Jours fériés”,
+“en_UK”: “Holidays”,
+“es”: “Vacaciones”,
+“zh”: “假日”,
+“zh_HK”: “假期”,
+“zh_TW”: “節日”,
+“ja”: “イベント”,
+“zh_CN”: “假日”,
+“da”: “Ferier”,
+“nl”: “Feestdagen”
+
+}
+
+},
+
+2c. Additionally, tagId 21916 (Seasonal & Special Occasions) doesn’t have any parent tagIds, therefore it’s the main parent.
+
+{
+
+“tagId”: 21916,
+“allNamesByLocale”: {
+
+“de”: “Saisonale und besondere Anlässe”,
+“no”: “Sesongbaserte og spesielle anledninger”,
+“sv”: “Säsongsbundna och särskilda tillfällen”,
+“pt”: “Ocasiões especiais e temáticas”,
+“ko”: “계절적인 특별한 날”,
+“en_AU”: “Seasonal & Special Occasions”,
+“en”: “Seasonal & Special Occasions”,
+“it”: “Occasioni stagionali e speciali”,
+“fr”: “Saisonnier et grandes occasions”,
+“en_UK”: “Seasonal & Special Occasions”,
+“es”: “Ocasiones especiales y de temporada”,
+“zh”: “节庆与特殊场合”,
+“zh_HK”: “節慶和特別場合”,
+“zh_TW”: “季節性及特殊場合”,
+“ja”: “季節限定・特別な日”,
+“zh_CN”: “节庆与特殊场合”,
+“da”: “Sæsonbetonede og særlige lejligheder”,
+“nl”: “Seizoensgebonden en speciale gelegenheden”
+
+}
+
+},
+
+The hierarchy here is:
+
+    tagId 21916 (Seasonal & Special Occasions) – main parent tag
+    tagId 21584 (Holidays)
+    tagId 11892 (Christmas) and other tags for which tagId 21584 (Holidays) is their parent tag
+
+Tag 21916 has more tags linked to it, such as tag 21593 (Weddings & Celebrations) or tag 21592 (Seasonal) with their own child tags that create additional hierarchies for different categories of tags.
+
+Back to top ↑
+Best practices
+1. Multiple product categories / subcategories
+
+Tags may be used to enable the user to filter by product category, as well as filter by specific product features.
+
+The screenshot below illustrates how to use tags to display product categories:
+
+Product 5836DINNERCRUISE returns the following tags in the API:
+“tags”: [
+
+21953,
+21958,
+21956,
+21074,
+21951,
+11963,
+11965,
+21955,
+21960,
+21949,
+21959,
+21954,
+11938,
+21948,
+21952,
+12053,
+20255,
+21972
+
+],
+
+Tag 11965 is for Dinner Cruises therefore this product can be found on Viator under the Category of Dinner Cruises.
+
+Thanks to the presence of multiple parentTagIds, it’s possible to link products to different categories and subcategories when they meet specific criteria, like in the example above. This way the product bookability could be increased by better product visibility.
+
+Tag 11965 (Dinner Cruises) has several parentTagIds:
+
+{
+
+“tagId”: 11965,
+“parentTagIds”: [
+
+11890, ← Dining Experiences
+21911, ← Food & Drink
+21442, ← On the Water
+21909, ← Outdoor Activities
+21701, ← Cruises & Sailing
+21913 ← Tours, Sightseeing & Cruises
+
+],
+2. Promoting high quality products
+
+There are several tags that can indicate high product quality, such as:
+
+    tagId 21972 – Excellent Quality
+    tagId 22143 – Best Conversion
+    tagId 22083 – Likely To Sell Out
+    tagId 11940 – Once in a Lifetime
+    tagId 21074 – Unique experiences
+    tagId 6226 – Best Value
+    tagId 21971 – Viator Plus – products that have the Badge of Excellence on Viator and they meet the quality standards mentioned here (excellent quality level is one of them)
+
+They may be used to create custom sort orders or additional filters to help customers find the best products:
+3. Multiple filtering options
+
+Tags may be used to create multiple filtering options based on the specific business model and customer needs. Below is an example of the implementation of tags to create filtering based on Categories, Time of Day, and Specials
+4. Creating campaigns
+
+Tags are also very useful in creating temporary campaigns for specific holidays, for example:
+
+    tagId 11892 – Christmas
+    tagId 11893 – Halloween
+    tagId 21583 – Chinese New Year
+    tagId 11895 – National Holidays
+    tagId 11957 – Easter
+    tagId 11894 – Mother’s Day
+    tagId 20213 – Father’s Day
+    tagId 11898 – Valentine’s Day
+    tagId 11896 – New Years
+    tagId 11956 – Day of the Dead
+
+They all are linked to tags 21584 (Holidays) and 21916 (Seasonal & Special Occasions).
+
+Back to top ↑
+Product search by tags
+
+The /products/search endpoint offers the functionality to search for products based on tags. This is useful for search bars where customers can select specific search criteria to get products that match their requirements.
+
+In order to do this, it’s necessary to include the relevant tagId(s) under the tags object in the request body when using the /products/search endpoint.
+For example this request will allow to find bus tours (tagId 11930) available in London (destId 737) for Christmas (tagId 11892) that are excellent quality products (tagId 21972):
+{
+
+“filtering”: {
+
+“destination”: “737”,
+“tags”: [
+
+21972, 11892, 11930
+
+],
+“flags”: [
+
+“FREE_CANCELLATION”
+
+],
+“highestPrice”: 1500,
+“startDate”: “2021-11-23”,
+“endDate”: “2021-12-29”
+
+},
+“sorting”: {
+
+“sort”: “PRICE”,
+“order”: “DESCENDING”
+
+},
+“pagination”: {
+
+“start”: 1,
+“count”: 50
+
+},
+“currency”: “USD”
+
+}
+
+Back to top ↑
+Mapping v1 categories to v2 tags
+
+In case you upgrade from v1 of our API to v2 there is an easy way of mapping products to v2 tags with the use of this Excel spreadsheet.
+
+Below is an example of how v1 subcategory “Balloon Rides” linked to v1 category “AIr, Helicopter & Balloon Rides” is mapped to v2 tag “Hot Air Balloon Rides”:
+v2 tag display name 	v2 tagId 	v1 subcategoryId 	v1 subcategoryName 	v1 categoryId 	v1 groupName
+Hot Air Balloon Rides 	12027 	3 	Balloon Rides 	1 	Air, Helicopter & Balloon Tours
+
+Please note: not all v2 tags have equivalent v1 categories/subcategories as there are more v2 tags than pre-existing v1 categories/subcategories. That’s why it’s recommended to work not only with the mapping file, but also with the list of all v2 tags returned in the API via the products/tags endpoint and conduct mapping based on the “mesh” structure of tags.
+

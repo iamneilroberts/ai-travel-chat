@@ -1,0 +1,69 @@
+destinations
+
+Get details of all destinations supported by the API. Destinations should be refreshed weekly (in addition to on-demand updates when a new destination is returned in the product content response).
+
+Note:
+
+    Returns a complete list of Viator destinations, including destination names and parent identifiers
+    Used to provide navigation through drill down lists or combo boxes
+    Use the data received from this endpoint to resolve the destination identifier(s) in the destinations[].ref element in the product content response
+
+Authorizations:
+API-key
+query Parameters
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in destinationUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+Array of objects (DestinationDetails)
+totalCount	
+integer <int32>
+
+Total count of Destinations returned
+

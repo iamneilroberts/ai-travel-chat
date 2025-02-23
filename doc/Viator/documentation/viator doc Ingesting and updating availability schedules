@@ -1,0 +1,225 @@
+Resolving references
+
+Some information in the product content response is not communicated explicity; but rather, by reference, and therefore requires an extra de-referencing step to acquire the full details of the element.
+
+These data types comprise:
+
+    locations
+    destinations
+    tags
+
+The following sections describe how to de-reference these elements using the API.
+Location references
+
+All locations within the product content response are given as a location reference; e.g.:
+
+ "activityInfo": {
+    "location": {
+        "ref": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq"
+    },
+
+These location references can be resolved using the /locations/bulk endpoint; for example:
+
+Request:
+
+{
+  "locations": [
+    "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq",
+    "LOC-6eKJ+or5y8o99Qw0C8xWyK8Z2imHSU8Ozi+NYupJVyI="
+  ]
+}
+
+Response:
+
+{
+  "locations": [
+    {
+      "provider": "GOOGLE",
+      "reference": "LOC-o0AXGEKPN4wJ9sIG0RAn5Cdd0Y9TkTxkcosDq0rJgjR12IzpogNi5POX+yGLXEoq",
+      "providerReference": "ChIJS1UFbTyX1ZER0vTgCLKWCEQ"
+    },
+    {
+      "provider": "TRIPADVISOR",
+      "reference": "LOC-6eKJ+or5y8o99Qw0C8xWyK8Z2imHSU8Ozi+NYupJVyI=",
+      "name": "Valley of the Roses",
+      "address": {
+        "street": "Dades Valley, near Bouteghrar",
+        "administrativeArea": "El Kelaa M'gouna",
+        "country": "Morocco",
+        "countryCode": "MA",
+        "postcode": "43000"
+      },
+      "center": {
+        "latitude": 34.00061,
+        "longitude": -6.84494
+      }
+    }
+  ]
+}
+
+Note that there are two different location information providers, "TRIPADVISOR" and "GOOGLE", referring to locations in the Tripadvisor location database or locations provided by the Google Maps platform via the Google Places API, respectively.
+
+Tripadvisor locations include full details of the location in the response from /locations/bulk, including address and geolocation information. However, you will need to use the Google Places API to retrieve details for Google Maps locations.
+
+The purpose of referring to locations by reference is to avoid the unnecessary transmission of duplicate data, as multiple products may include the same location reference. Therefore, we recommend caching the data received from this endpoint, checking this first to see if a particular location's details have been retrieved by your system in the past before making a request to /locations/bulk.
+
+Requests can be made to /locations/bulk asynchronously; e.g., during the content ingestion process.
+Destination references
+
+Every product in the Viator catalogue is categorized according to the destination/locale in which it operates.
+
+There are multiple kinds of destination, which includes cities, regions, countries and others
+
+Example destinations*:
+type 	destinationId 	destinationName
+CITY 	343 	Bangkok
+COUNTRY 	749 	Panama
+COUNTY 	51632 	Xiahe County
+DISTRICT 	51921 	Hunza
+HAMLET 		
+ISLAND 	51220 	Syros
+NATIONAL PARK 	51196 	Death Valley National Park
+NEIGHBORHOOD 	60465 	Kensington
+PENINSULA 	51769 	Michamwi
+PROVINCE 	51255 	Mendoza Province
+REGION 	4431 	Northern China
+STATE 		
+TOWN 	50971 	Swansea
+UNION TERRITORY 	51542 	Daman and Diu
+VILLAGE 	51011 	Pyrgos
+WARD 	52140 	Shibuya
+
+    Notes: The examples above are subject to change. These are all currently supported destination types, though for some there are no live examples at the moment
+
+Every product has one or more destinations associated with it by way of its destination reference. This is given in the destinations object in the response from any of the product content endpoints; e.g.:
+
+"destinations": [
+  {
+    "ref": "34198",
+    "primary": true
+  }
+],
+
+To de-reference destination identifiers, you must use our destination taxonomy, which can be retrieved from the /destinations endpoint.
+
+You may wish to filter products according to destination.
+
+A call to /destinations will return data for all available destinations. You must store a local copy of this mapping information, as destination data does not change frequently – i.e., new destinations are rarely added. On-demand updates can be done in the event you encounter a product associated to a destination reference for which you do not have the details.
+
+Example snippet of destination taxonomy:
+
+{
+  "destinationId": 34198,
+  "name": "Seminyak",
+  "type": "CITY",
+  "parentDestinationId": 98,
+  "lookupId": "2.15.98.34198",
+  "defaultCurrencyCode": "IDR",
+  "timeZone": "Asia/Makassar",
+  "center": {
+    "latitude": -8.68877,
+    "longitude": 115.161267
+  }
+},
+{
+  "destinationId": 901,
+  "name": "Buenos Aires",
+  "type": "CITY",
+  "parentDestinationId": 22280,
+  "lookupId": "9.78.22280.901",
+  "destinationUrl": "https://shop.live.rc.viator.com/x/d901-ttd?mcid=42383&pid=P00108950&medium=api&api_version=2.0",
+  "defaultCurrencyCode": "ARS",
+  "timeZone": "America/Argentina/Buenos_Aires",
+  "iataCode": "BUE",
+  "center": {
+    "latitude": -34.6084175,
+    "longitude": -58.3731613
+  }
+},
+...
+
+Note that destinations are organized into a hierarchy. The destination's position in the hierarchy can be determined according to the parentDestinationId and lookupId fields.
+
+In the second example above, Buenos-Aires is a "CITY", and it has a parentDestinationId of 22280, which is the destinationId of "The Pampas" – the "REGION" in South America where Buenos-Aires is located.
+
+The destination's full lineage with respect to the hierarchy is given in lookupId, which is a series of destination ids separated by periods - in this case:
+
+  "lookupId": "9.78.22280.901"
+
+Component 	Destination name 	Destination type
+9 	(unnamed) 	(broad continental designation)
+78 	Argentina 	"COUNTRY"
+22280 	The Pampas 	"REGION"
+901 	Buenos-Aires 	"CITY"
+
+Using this information, you are able to categorize each product into its geographical location for display and search purposes.
+Tag references
+
+Each product is also categorized according to its content, features or theme. Each attribute has a corresponding identifier called a 'tag'. The tag references for each product are contained in the tags array, in the response from any of the product content endpoints.
+
+Example tags array (product 250380P1 – Surf lessons Bali, Canggu):
+
+
+"tags": [
+  20246,
+  21946,
+  20244
+],
+
+These numeric tag identifiers can be de-referenced using information available from the /products/tags endpoint. This service takes no parameters and retrieves information for all available tags.
+
+To learn more about tags, see this article: Viator tags, explained
+
+We recommend you store a local copy of this information, as tags do not change frequently. It is only necessary to re-ingest from this endpoint in the event you encounter a product that references a tag for which you do not have the details.
+
+As with destinations, tags are organized into a hierarchy. A tag's relative position within that hierarchy can be determined by tracing back through its parent tag ids, which (if the tag has any) are listed in its parentTagIds element. Each tag can have multiple parent tags, and each tag can eventually be traced back to its parent. Parent tags are tags that have no parents; i.e., they are at the top of the hierachy.
+
+For example, tag: 20244 (Sports Lessons) in /products/tags response:
+
+{
+  "tagId": 20244,
+  "parentTagIds": [
+      21478,
+      21909,
+      21915
+  ],
+  "allNamesByLocale": {
+      "de": "Sportkurse",
+      "no": "Treningskurs",
+      "sv": "Idrottslektioner",
+      "pt": "Aulas de esportes",
+      "en_AU": "Sports Lessons",
+      "en": "Sports Lessons",
+      "it": "Lezioni di sport",
+      "fr": "Cours de sport",
+      "en_UK": "Sports Lessons",
+      "es": "Sesiones deportivas",
+      "zh": "运动课",
+      "zh_HK": "體育課程",
+      "zh_TW": "運動課程",
+      "ja": "スポーツ教室",
+      "zh_CN": "运动课",
+      "da": "Sportsundervisning",
+      "nl": "Sportlessen"
+  }
+},
+
+The parentTagIds for 20244 - Sports lessons are:
+
+    21478 – "Active & Outdoor Classes"
+    21909 – "Outdoor Activities"
+    21915 – "Classes & Workshops"
+
+These three tags have no parent tags, and are therefore at the top of the hierarchy. Applying this same process to the other tags in the tags array, we can determine the full set of tags for this product, in this case:
+
+    21909 – "Outdoor Activities"
+        21478 – "Active & Outdoor Classes"
+            20244 - "Sports lessons"
+    21915 – "Classes & Workshops"
+    21946 – "Good for avoiding crowds"
+    21442 – "On the water"
+        20246 – "Surfing lessons"
+
+By traversing the hierarchy in this way, we have surfaced seven tags that pertain to this product with different levels of generality; i.e. it is an 'active and outdoor class', and it is a 'sports lesson'. More generally, it is an 'outdoor activity', a class or workshop, and is 'good for avoiding crowds':
+
+In this way, you can categorize products for search and recommendation purposes, or to create category display and search buttons as seen on viator.com 'things to do' pages; e.g.:

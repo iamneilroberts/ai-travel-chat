@@ -1,0 +1,459 @@
+Availability
+/availability/check
+
+Check real-time availability and pricing for a product depending on the date, pax-mix, start time and/or product option.
+
+We recommend using the pricing information returned by this endpoint as the source of truth for the amount you will be invoiced by Viator for the sale of the product in question.
+
+The third response example – 265910P1 (commission payment model) – shows the alternative PriceObject for merchants using the commission payment model.
+
+Note: This service should only be used to determine the availability of a product immediately prior to booking. Bulk operations pertaining to product availability; e.g., generating a calendar of availability for a product, should use the availability schedule endpoints.
+
+(Response sample generated on: 2021-04-06)
+Authorizations:
+API-key
+header Parameters
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Request Body schema: application/json;version=2.0
+productCode
+required
+	
+string(?s).*[\S].*
+
+Retrieve availability details for the product identified by this product code
+productOptionCode	
+string
+
+Retrieve availability details for the product option (tour grade) identified by this product option code
+
+For more information see: Key concepts: Product options
+startTime	
+string <time>
+
+Retrieve availability details only for items that start at this time. If this parameter is omitted, information about all available starting times for the specified date will be included in the response.
+
+    Example: "17:15"
+
+travelDate
+required
+	
+string <date>
+
+Retrieve availability details for items that operate on this date
+currency
+required
+	
+string(?s).*[\S].*
+
+Display pricing in the currency identified by this 3-letter code
+
+    Example: "USD"
+
+required
+	
+Array of objects (PaxMixItem)
+
+Passenger-mix information
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+currency
+required
+	
+string(?s).*[\S].*
+
+Currency in which pricing is expressed in this response (as specified in the request)
+productCode
+required
+	
+string(?s).*[\S].*
+
+Product code of the product that this availability response pertains to
+travelDate
+required
+	
+string <date>
+
+Date of travel for all bookable items returned in this response (relative to the time zone in which the product operates)
+required
+	
+Array of objects (CheckAvailabilityBookableItem)
+
+Bookable items for this product
+Request samples
+Content type
+application/json;version=2.0
+Example
+5010SYDNEY
+{
+
+    "productCode": "5010SYDNEY",
+    "travelDate": "2020-12-12",
+    "currency": "AUD",
+    "paxMix": 
+
+[
+
+{},
+
+        {}
+    ]
+
+}
+Response samples
+
+    200400401403404429500503
+
+Content type
+application/json;version=2.0
+Example
+5010SYDNEY
+{
+
+    "currency": "AUD",
+    "productCode": "5010SYDNEY",
+    "travelDate": "2021-12-12",
+    "bookableItems": 
+
+[
+
+{},
+{},
+
+        {}
+    ]
+
+}
+/availability/schedules/{product-code}
+
+Get availability and pricing details for all product options of the requested product. The pricing is returned in the supplier's currency. We recommend using the /exchange-rates endpoint to get the Viator exchange rates and apply them for pricing conversion.
+
+Note: This endpoint should not be used for ingesting or updating the availability and pricing details for the entire catalog of Viator products. Instead, please use the /availability/schedules/modified-since endpoint for that purpose.
+
+(Response sample generated on: 2021-03-12)
+Authorizations:
+API-key
+path Parameters
+product-code
+required
+	
+string
+
+Retrieve availability details for the product identified by this product code
+header Parameters
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+productCode
+required
+	
+string(?s).*[\S].*
+
+Unique identifier for this product
+required
+	
+Array of objects (ProductBookableItemSchedule)
+
+Bookable items for this product
+currency
+required
+	
+string(?s).*[\S].*
+
+Three letter currency code for all pricing information in this response; based on the supplier's currency.
+required
+	
+object (AvailabilityScheduleSummary)
+
+Information about the lowest price available for this product
+
+Note: The pricing information given here is based on the recommended retail price (RRP). While affiliate partners must sell at this price, merchant partners set their own prices according to their own margins and booking fees; therefore, merchant partners must calculate their own from-price for display, rather than using these values, unless they have elected to sell at the RRP.
+Response samples
+
+    200400401403404405429500503
+
+Content type
+application/json;version=2.0
+Example
+/availability/schedules/5010SYDNEY
+{
+
+    "productCode": "5010SYDNEY",
+    "bookableItems": 
+
+[
+
+{},
+{},
+{},
+
+    {}
+
+],
+"currency": "AUD",
+"summary":
+
+    {
+        "fromPrice": 56.15
+    }
+
+}
+/availability/schedules/bulk
+
+Get availability and pricing details for all product options of all requested products. The pricing is returned in the supplier's currency. We recommend using the /exchange-rates endpoint to get the Viator exchange rates and apply them for pricing conversion.
+
+Note: This endpoint should not be used for ingesting or updating the availability and pricing details for the entire catalog of Viator products. Instead, please use the /availability/schedules/modified-since endpoint for that purpose.
+
+(Response sample generated on: 2021-03-12)
+Authorizations:
+API-key
+header Parameters
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Request Body schema: application/json;version=2.0
+productCodes
+required
+	
+Array of strings <= 500 items
+
+List of product codes for which to retrieve availability schedules
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+required
+	
+Array of objects (ProductAvailabilitySchedule)
+
+Array of availability schedule objects
+Request samples
+Content type
+application/json;version=2.0
+{
+
+    "productCodes": 
+
+    [
+        "265910P1",
+        "5010SYDNEY"
+    ]
+
+}
+Response samples
+
+    200400401403405429500503
+
+Content type
+application/json;version=2.0
+{
+
+    "availabilitySchedules": 
+
+[
+
+{},
+
+        {}
+    ]
+
+}
+/availability/schedules/modified-since
+
+Get full future availability details for all products modified since the specified time. The pricing is returned in the supplier's currency. We recommend using the /exchange-rates endpoint to get the Viator exchange rates and apply them for pricing conversion. Initiate a full ingestion only to establish your local copy; this should be a rare occurrence compared to regular updates. Fetch incremental updates through this endpoint on an hourly basis. You are welcome to poll for updates as frequently as every 15 minutes if desired. Be mindful that excessive frequency beyond these recommendations may trigger rate limits.
+
+(Response sample generated on: 2021-03-12)
+Authorizations:
+API-key
+query Parameters
+cursor	
+string
+
+Pagination cursor received from a previous call to this endpoint that points to the desired starting point for the results.
+
+Note: Pagination will come into play when the number of results exceeds the figure given in the count parameter. In this case, pass the content of the nextCursor element for the value of cursor to receive the next page of results. The final page of results will not include the nextCursor element. For more information, see: Ingesting and updating availability schedules.
+
+    Example: 'MTYwNTA2ODAwOXw1NjcyUDk='
+
+count	
+integer [ 1 .. 500 ]
+
+The maximum number of products to be returned in response.
+
+    Maximum allowed and default value: 500
+
+modified-since	
+string <date-time> ^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])...
+
+Only retrieve availabilty schedules that have been modified since the date and time (UTC) specified by this timestamp
+
+Note:
+
+    As this is a query parameter, colons (i.e., :) in the timestamp should be URL-encoded as %3A; e.g.: "2020-09-30T00%3A00%3A01.737043Z"
+    Using this parameter is not recommended as the standard pagination method; rather, use the cursor parameter to ensure all availability schedule updates are captured during ingestion.
+
+header Parameters
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+required
+	
+Array of objects (ProductAvailabilitySchedule)
+
+Array of availability schedule objects
+nextCursor	
+string
+
+A cursor to use when fetching the next set of products.
+
+    Example: "MTU3NDA0NDczOQ=="
+
+Response samples
+
+    200400401403429500503
+
+Content type
+application/json;version=2.0
+{
+
+    "availabilitySchedules": 
+
+[
+
+{},
+{},
+{},
+{},
+
+        {}
+    ],
+    "nextCursor": "MTYwNTA2ODAwOXw1NjcyUDk="
+
+}

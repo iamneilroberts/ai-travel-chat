@@ -34,27 +34,39 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputText.trim() && !isProcessing) {
+      const trimmedInput = inputText.trim();
+      
       // Add user message
       const userMessage: Message = {
         id: uuidv4(),
         type: 'user',
-        content: inputText.trim(),
+        content: trimmedInput,
         timestamp: new Date(),
       };
       
-      // Add AI acknowledgment
+      // Add AI acknowledgment with appropriate message based on command
+      let processingMessage = 'Processing your request...';
+      if (trimmedInput.startsWith('/describe')) {
+        processingMessage = 'Generating description...';
+      } else if (trimmedInput.startsWith('/verify')) {
+        processingMessage = trimmedInput === '/verify all' 
+          ? 'Verifying all items...' 
+          : 'Verifying item...';
+      } else {
+        processingMessage = mode === 'initial' 
+          ? 'Processing your trip request...'
+          : 'Updating your trip details...';
+      }
+
       const aiMessage: Message = {
         id: uuidv4(),
         type: 'ai',
-        content: mode === 'initial' 
-          ? 'Processing your trip request...'
-          : 'Updating your trip details...',
+        content: processingMessage,
         timestamp: new Date(),
       };
 
       setMessages(prev => [...prev, userMessage, aiMessage]);
-      // Only send the user's input
-      onSubmit(inputText.trim());
+      onSubmit(trimmedInput);
       setInputText('');
     }
   };

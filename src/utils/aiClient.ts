@@ -214,13 +214,13 @@ export class AIClient {
       };
     }
 
-    return this.sendCommand(formattedCommand, rejectionNote, alternatives, model, systemPrompt);
+    return this.sendCommand(formattedCommand, rejectionNote, alternatives, model);
   }
 
   static async sendBuildTripCommand(
     content: string,
     systemPrompt: string,
-    detailedPlanRejectionNote?: string, // Added detailedPlanRejectionNote
+    detailedPlanRejectionNote?: string,
     model?: string
   ): Promise<AIResponse> {
     const { isValid, formattedCommand, error } = CommandProcessor.processCommand(
@@ -241,7 +241,49 @@ export class AIClient {
       };
     }
 
-    return this.sendCommand(formattedCommand, undefined, undefined, detailedPlanRejectionNote, model, systemPrompt);
+    return this.sendCommand(formattedCommand, undefined, undefined, model);
+  }
+
+  static async sendDescribeCommand(
+    content: string,
+    systemPrompt: string,
+    model?: string
+  ): Promise<AIResponse> {
+    const { isValid, formattedCommand, error } = CommandProcessor.processCommand(
+      'describe',
+      content,
+      systemPrompt
+    );
+
+    if (!isValid || !formattedCommand) {
+      return {
+        content: '',
+        error: error || 'Failed to format command'
+      };
+    }
+
+    return this.sendCommand(formattedCommand, undefined, undefined, model);
+  }
+
+  static async sendVerifyCommand(
+    content: string,
+    systemPrompt: string,
+    model?: string
+  ): Promise<AIResponse> {
+    const { isValid, formattedCommand, error } = CommandProcessor.processCommand(
+      'verify',
+      content,
+      systemPrompt
+    );
+
+    if (!isValid || !formattedCommand) {
+      return {
+        content: '',
+        error: error || 'Failed to format command'
+      };
+    }
+
+    return this.sendCommand(formattedCommand, undefined, undefined, model);
   }
 
   // Keeping mock response for development/testing

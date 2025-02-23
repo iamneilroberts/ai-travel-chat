@@ -1,0 +1,50 @@
+products/tags
+
+Get details for all tags (includes all languages/localizations) Tags should be cached and refreshed weekly.
+
+To learn more about tags, see this article: Viator tags, explained
+
+Note: If no response is received for a given tag reference, this means that the tag was removed from our database and the associated product has not yet been updated with a replacement tag. If this occurs, please disregard the removed tag.
+
+Note: The example response has been truncated to five entries for brevity.
+
+(Response sample generated on: 2020-08-25)
+Authorizations:
+API-key
+header Parameters
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+

@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tour {
+  id             String   @id @default(cuid())
+  tourId         String   @unique // Viator's product code
+  title          String
+  description    String   @db.Text
+  location       Json     // Enhanced with full address, pickup points
+  ratings        Float
+  reviews        Int
+  categories     String[] // Using Viator tags
+  duration       String   // Proper duration format
+  priceRange     Json     // Enhanced pricing info
+  
+  // Basic Additional Info
+  inclusions     String[] // What's included
+  exclusions     String[] // What's not included
+  highlights     String[] // Key features
+  languages      String[] // Available languages
+  accessibility  String[] // Accessibility features
+  tags           Int[]    // Viator tag IDs
+  productUrl     String   // Viator booking URL with partner IDs
+  bookingInfo    Json     // Confirmation settings, requirements
+  
+  // Review data
+  reviewCount    Int      @default(0)
+  ratingAvg      Float    @default(0)
+  
+  // Metadata
+  status         String   @default("ACTIVE")
+  region         String   @default("UNKNOWN")
+  lastSync       DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdAt      DateTime @default(now())
+}

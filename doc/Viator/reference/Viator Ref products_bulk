@@ -1,0 +1,279 @@
+products/bulk
+
+Get full product details for all requested products (limited to 500 products per request)
+
+Note:
+
+    This endpoint should not be used to ingest or update the product catalog. Instead, please use the /products/modified-since endpoint for that purpose.
+    The response object utilizes polymorphism and differs markedly depending on whether the product is active or inactive. Click the drop-down selector in the status description to toggle between an "ACTIVE" and "INACTIVE" product response.
+
+(Response sample generated on: 2020-10-06)
+Authorizations:
+API-key
+query Parameters
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in productUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+target-lander	
+string
+
+Affiliate partners only: Specifies the type of landing page customers will be shown when opening the link provided in the productUrl field.
+
+Ordinarily, when customers follow the link in productUrl, they are redirected to a sales-conversion-optimized affiliate landing page. This default behavior can be disabled by setting this parameter to "NONE", which will modify the productUrl query string such that when opened, the customer will instead land on the standard viator.com product display page, which is not optimized for affiliate-link sales.
+
+Available values:
+
+    "NONE": Causes target_lander=NONE to be included in the productUrl query string, which will disable redirection to an affiliate landing page when the link is followed.
+
+Our recommendation is for you to allow the default behavior by not including this parameter, unless you have a specific technical or business requirement to do so.
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Request Body schema: application/json;version=2.0
+productCodes
+required
+	
+Array of strings <= 500 items
+
+List of product codes for which to retrieve full product details
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+Array
+status
+required
+	
+string (ProductStatus)
+
+Machine-interpretable value indicating this product's current availablility; one of:
+
+    "ACTIVE" - product is available for sale
+    "INACTIVE" - product is not available for sale (remainder of object will be empty)
+
+ACTIVE
+productCode
+required
+	
+string(?s).*[\S].*
+
+Code that is the unique identifier for this product.
+
+    Example: "5657BRIDGECLIMB"
+
+language	
+string
+
+Code indicating the language into which the natural-language fields in this response will be translated (if necessary)
+createdAt
+required
+	
+string <date-time>
+
+Timestamp (UTC) indicating when this product was originally created
+
+    Example: "2019-04-03T02:54:29.082753Z"
+
+lastUpdatedAt	
+string <date-time>
+
+Timestamp (UTC) indicating the most recent occasion of this product's details being modified
+
+    Example: "2020-06-11T09:16:39Z"
+
+title	
+string
+
+Title of this product
+
+    Example: "Sydney BridgeClimb"
+
+    Note: This field contains natural language suitable for display to the user; content will be translated (if necessary) into the language specified in the Accept-Language header parameter
+
+required
+	
+object (TicketInfo)
+
+Ticket/voucher details for this product
+required
+	
+object (PricingInfo)
+
+Ticket/voucher details for this product
+Array of objects (Image)
+
+Images for this product
+required
+	
+object (Logistics)
+
+Logistics details for this product
+timeZone
+required
+	
+string(?s).*[\S].*
+
+Code for the time zone in which this product operates (IANA TZ database name format)
+
+    Example: 'Australia/Sydney'
+
+description
+required
+	
+string(?s).*[\S].*
+
+Description of this product
+
+    Example: "Climb the Sydney Harbour Bridge with an expert guide for the ultimate Sydney experience..."
+
+    Note: This field contains natural language suitable for display to the user; content will be translated (if necessary) into the language specified in the Accept-Language header parameter
+
+Array of objects
+
+Features that are included with this product package
+
+    Note: The same inclusion item may appear multiple times in this array. For example, 'Lunch'. For a 7-day multi-day tour, 'Lunch' appearing seven times indicates that lunch is included on each of the seven days of the tour. This can be displayed as "Lunch (7)"
+
+Array of objects
+
+Features that are not included with this product package
+required
+	
+Array of objects (AdditionalInfo)
+
+Facts necessary to communicate to travelers regarding this product.
+
+Note: Items included only if they apply, if they do not apply they will not be included in the response.
+required
+	
+object (CancellationPolicy)
+
+Cancellation policy details for this product.
+required
+	
+object (BookingConfirmationSettings)
+
+How this product's bookings are confirmed
+
+For more information, see Booking concepts – Booking cutoff times
+required
+	
+object (BookingRequirements)
+
+Passenger type and number requirements for booking
+Array of objects (LanguageGuide)
+
+Language guides available for this product across all product option codes
+bookingQuestions
+required
+	
+Array of strings
+
+Array of machine-interpretable values specifying the facts that the traveler must provide when booking this product; further details can be retrieved via the /products/booking-questions endpoint
+tags
+required
+	
+Array of integers
+
+Array of numeric tag identifiers indicating the product categories into which this product falls To retrieve details about which tags these identifiers refer to, please use the /products/tags endpoint.
+required
+	
+Array of objects (Destination)
+
+Destinations – i.e., cities, states, countries and regions – in which this product can be considered to operate
+object (Itinerary)
+
+Details about the places this product visits
+
+See: Key concepts – Itineraries for more information
+Array of objects (ProductOption)
+
+Product options (tour grades) available for this product
+
+For more information see: Key concepts: Product options
+object (TranslationDetails)
+
+Information about whether the text in this response was machine-translated
+required
+	
+object (Supplier)
+
+Supplier details
+productUrl	
+string
+
+URL for this product on the viator.com site, where the customer will complete their booking.
+
+This URL includes all the necessary information for viator to correctly attribute and pay commission for the sale to the referring partner.
+
+If campaign-value is included in the request, this URL will also include the campaign tracking value that you set.
+
+For more information, see our guide to Affiliate Attribution on the Viator Partner Resource Center.
+
+Note:
+
+    This element is only returned for affiliate partners.
+    You must use the full URL and not modify it in any way – any changes could result in failure to attribute the sale to you, which means you will not be paid a commission for this sale.
+
+Example format: https://www.viator.com/tours/Sydney/Sydney-and-Bondi-Hop-on-Hop-off-Tour/d357-5010SYDNEY?mcid=42383&pid=P00045135&medium=api&version=2.0&campaign=example
+required
+	
+object (ProductReviews)
+
+Summary of reviews and ratings for this product
+
+Note:
+
+    Review data is updated daily; i.e., all reviews received on a day will be added and averages re-calculated in a single event.
+    Viator performs checks on reviews - for more information, see Key concepts - Review authenticity
+
+object (ViatorUniqueContent)
+
+Product details unique to Viator.com
+
+Note:
+
+    Access to this information is only available if it is enabled for your account. Please speak to your account manager if you would like to take advantage of our unique content.
+    You must ensure that your site is configured such that no Viator Unique Content is indexed by any search engine. This is a requirement for site certification. For more information, see Key concepts – Protecting unique content
+
+

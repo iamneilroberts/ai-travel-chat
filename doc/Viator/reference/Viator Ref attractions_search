@@ -1,0 +1,355 @@
+Attractions
+/attractions/search
+
+Get a list of attractions associated with a given destinationId, along with all relevant information about them, including products mapped.
+
+Attractions should be cached and refreshed weekly.
+
+Note:
+
+    Pages generated using data from this endpoint are subject to a strict no-index policy. You must ensure that your site is configured such that no Viator Unique Content is indexed by any search engine. This is a requirement for site certification. For more information, see Key concepts – Protecting unique content. If you are unsure about whether you are correctly following this rule or if you would like to take advantage of our unique content, please reach out to our support team.
+
+Authorizations:
+API-key
+query Parameters
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in attractionUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Request Body schema: application/json;version=2.0
+destinationId
+required
+	
+integer
+
+Unique numeric identifier of the destination to retrieve attractions for
+object
+
+How the search results will be sorted
+object
+
+Pagination details specifying which search results to return based on start position and item count
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+Array of objects (AttractionDetails)
+totalCount	
+integer <int32>
+
+Total number of products matching the filtering criteria – these may be accessed via multiple calls to this service using the pagination feature
+Request samples
+Content type
+application/json;version=2.0
+{
+
+    "destinationId": 0,
+    "sorting": 
+
+{
+
+    "sort": "DEFAULT"
+
+},
+"pagination":
+
+    {
+        "start": 1,
+        "count": 30
+    }
+
+}
+Response samples
+
+    200400401403404405406429500503
+
+Content type
+application/json;version=2.0
+{
+
+    "attractions": 
+
+[
+
+        {}
+    ],
+    "totalCount": 0
+
+}
+/attractions/{attraction-id}
+
+Get all relevant information about a specific attractionId, including products mapped.
+
+Note:
+
+    Pages generated using data from this endpoint are subject to a strict no-index policy. You must ensure that your site is configured such that no Viator Unique Content is indexed by any search engine. This is a requirement for site certification. For more information, see Key concepts – Protecting unique content. If you are unsure about whether you are correctly following this rule or if you would like to take advantage of our unique content, please reach out to our support team.
+
+Authorizations:
+API-key
+query Parameters
+campaign-value	
+string <= 200 characters
+
+Affiliate partners only: Specifies the campaign tracking identifier that will be appended to the URL returned in attractionUrl as a query parameter. Campaigns allow you to track how specific links perform, with metrics such as sessions, bookings, and commission. Reports are available via the Viator Partner Platform.
+
+Note: If you wish to use a campaign value that includes non-alphanumeric characters (e.g., '+', '-', etc.), you must URL-encode these characters.
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+attractionId
+required
+	
+integer
+
+Unique numeric identifier for this attraction
+name
+required
+	
+string
+
+Natural-language title of this attraction
+
+Note: This field contains natural language suitable for display to the user; content will be translated (if necessary) into the language specified in the Accept-Language header parameter
+required
+	
+Array of objects
+
+Destinations associated with this attraction
+attractionUrl
+required
+	
+string
+
+URL to forward users to in order to complete their purchase on the Viator site
+
+This URL includes all the necessary information for Viator to correctly attribute and pay commission for the sale to the referring partner.
+
+If campaign-value is included in the request, this URL will also include the campaign tracking value that you set.
+
+For more information, see our guide to Affiliate Attribution on the Viator Partner Resource Center.
+
+Note:
+
+    This element is only returned for affiliate partners.
+    You must use the full URL and not modify it in any way – any changes could result in failure to attribute the sale to you, which means you will not be paid a commission for this sale.
+
+Example:
+
+    https://www.viator.com/Inverness-attractions/Loch-Ness/d5051-a31?mcid=42383&pid=P00045135&medium=api&version=2.0&campaign=example
+
+productCount
+required
+	
+integer
+
+Number of products associated with the attraction
+productCodes
+required
+	
+Array of strings
+
+List of productCodes associated with the attraction
+required
+	
+Array of objects (ImageVariant)
+
+Images for this attraction
+object (ProductReviewsSummary)
+
+Summary of reviews and ratings for this attraction
+
+Note:
+
+    Review data is updated daily; i.e., all reviews received on a day will be added and averages re-calculated in a single event.
+    Viator performs checks on reviews - for more information, see Review authenticity
+
+freeAttraction	
+boolean
+
+Identifies if a admission fee is required to access this attraction
+openingHours	
+string
+
+This attraction Opening Hours
+object
+
+Attraction details unique to Viator.com
+
+Note:
+
+    Access to this information is only available if it is enabled for your account. Please reach out to our support team if you would like to take advantage of our unique content..
+    You must ensure that your site is configured such that no Viator Unique Content is indexed by any search engine. This is a requirement for site certification. For more information, see Key concepts – Protecting unique content
+
+object (TranslationDetails)
+
+Information about whether the text in this response was machine-translated
+object (LocationCenter)
+
+Geographic coordinates (latitude/longitude) for this location
+object
+
+Address details for this attraction
+Response samples
+
+    200400401403404405406429500503
+
+Content type
+application/json;version=2.0
+{
+
+    "attractionId": 0,
+    "name": "string",
+    "destinations": 
+
+[
+
+    {}
+
+],
+"attractionUrl": "string",
+"productCount": 0,
+"productCodes":
+[
+
+    "string"
+
+],
+"images":
+[
+
+    {}
+
+],
+"reviews":
+{
+
+    "sources": 
+
+[],
+"reviewCountTotals":
+
+    [],
+    "totalReviews": 0,
+    "combinedAverageRating": 0
+
+},
+"freeAttraction": true,
+"openingHours": "string",
+"viatorUniqueContent":
+{
+
+    "introduction": "string",
+    "overview": 
+
+    {}
+
+},
+"translationInfo":
+{
+
+    "containsMachineTranslatedText": true,
+    "translationSource": "string",
+    "translationAttribution": "string"
+
+},
+"center":
+{
+
+    "latitude": 0,
+    "longitude": 0
+
+},
+"address":
+
+    {
+        "street": "string",
+        "city": "string",
+        "state": "string",
+        "postcode": "string"
+    }
+
+}
+

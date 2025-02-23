@@ -102,15 +102,33 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
         rawResponse: aiResponse
       });
 
-      // For new commands, format the content after successful response
-      if (commandType === 'new' && chatInput) {
-        setContent(formatInitialTripDescription(chatInput));
-      }
-
       // Handle the response
       if (commandType === 'new') {
         const parsedOptions = parseNewTripOptions(aiResponse.content);
-        setTripAlternatives(parsedOptions);
+        if (parsedOptions) {
+          setTripAlternatives(parsedOptions);
+          
+          // First set up the initial template
+          const template = formatInitialTripDescription(chatInput || '');
+          
+          // Then immediately update it with the actual options
+          const optionsContent = parsedOptions.map((option, index) => [
+            `### Option ${index + 1}: ${option.title}`,
+            option.description,
+            option.estimatedCost ? `Estimated Cost: $${option.estimatedCost}` : '',
+            ''
+          ].filter(Boolean).join('\n')).join('\n');
+
+          const sections = template.split(/(?=## )/);
+          const updatedSections = sections.map(section => {
+            if (section.startsWith('## Generated Options')) {
+              return `## Generated Options\n${optionsContent}`;
+            }
+            return section;
+          });
+          
+          setContent(updatedSections.join(''));
+        }
       } else {
         setCommandResult(aiResponse.content);
       }
@@ -195,15 +213,14 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
 
   const handleTripOptionAccept = useCallback(async (option: TripOption, optionNumber: number) => {
     try {
-      // Get both the original request and initial description
-      const originalRequest = content.match(/## Original Request\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim();
+      // Get the initial description
       const initialDescription = content.match(/## Initial Trip Description\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim();
       
-      if (!originalRequest || !initialDescription) {
+      if (!initialDescription) {
         throw new Error('Missing required trip details');
       }
 
-      console.log('Found trip details:', { originalRequest, initialDescription });
+      console.log('Found trip details:', { initialDescription });
 
       // Format the selected option with all details
       const optionDetails = [
@@ -217,9 +234,6 @@ export const useTripManagement = ({ content, systemPrompt, setContent }: TripMan
       const updatedContent = [
         `## Initial Trip Description`,
         initialDescription,
-        '',
-        `## Original Request`,
-        originalRequest,
         '',
         `## Selected Option`,
         optionDetails, // Just the option details directly under Selected Option

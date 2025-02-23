@@ -9,7 +9,7 @@ import { AIClient } from '@/utils/aiClient';
 interface EditorProps {
   content: string;
   onChange: (content: string) => void;
-  onCommand: (command: CommandType, model?: string, rejectionNote?: string, alternatives?: string[]) => void;
+  onCommand: (command: CommandType, model?: string, rejectionNote?: string, alternatives?: string[], detailedPlanRejectionNote?: string) => void;
   isProcessing?: boolean;
   mode: 'split' | 'full';
   buildDisabled?: boolean;
@@ -107,12 +107,17 @@ export function MarkdownEditor({
     onCommand('build', model);
   }, [onCommand]);
 
+  const handleRejectPlan = useCallback((note: string) => {
+    onCommand('build', undefined, undefined, undefined, note);
+  }, [onCommand]);
+
   return (
     <div className="h-full flex flex-col bg-white dark:bg-gray-800">
       {showActionButtons && (
         <EditorControls
           onNewTrip={handleNewTrip}
           onBuildTrip={handleBuildTrip}
+          onRejectPlan={handleRejectPlan}
           mode={mode}
           disabled={isProcessing}
           buildDisabled={buildDisabled}

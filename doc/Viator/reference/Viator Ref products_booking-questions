@@ -1,0 +1,59 @@
+/products/booking-questions
+
+Get full details of all available preset booking questions. Booking questions should be cached and refreshed monthly.
+
+Note: This endpoint is only available to affiliate partners with API access level "Full Access + Booking" and merchant partners.
+
+(Response sample generated on: 2020-08-25)
+Authorizations:
+API-key
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+required
+	
+Array of objects (BookingQuestion)
+
+Booking questions for this product
+

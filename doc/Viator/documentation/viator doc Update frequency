@@ -1,0 +1,39 @@
+Update frequency
+
+We expect that your update frequency will not be more frequent than the following guidelines. More frequent updates will place an excessive burden on our systems and may result in your integration being shut off.
+
+See section on Rate Limiting for more information.
+Fixed-cadence delta updates
+
+In order to keep your local databases up-to-date without placing an excessive burden on our servers, we expect you use the following fixed cadences at which you should poll the content-ingestion endpoints:
+Endpoint 	Update cadence
+/products/modified-since 	Every 15-30 minutes following initial ingestion
+/availability/schedules/modified-since 	Every 15-30 minutes following initial ingestion
+/bookings/modified-since 	Every 5-10 minutes following initial ingestion
+/bookings/modified-since/acknowledge 	Right after ingesting the booking modifications
+Fixed-cadence full updates
+
+To ensure your systems reflect any removals of or changes to existing destinations, locations or booking questions, we expect that you retrieve full updates from these endpoints as follows:
+Endpoint 	Update cadence
+/destinations 	Weekly
+/attractions/search 	Weekly
+/products/booking-questions 	Monthly
+/products/tags 	Weekly
+/locations/bulk 	Monthly
+/reviews/product 	Weekly
+/bookings/cancel-reasons 	Monthly
+/suppliers/search/product-codes 	Weekly
+/bookings/status 	Hourly
+/exchange-rates 	Daily
+On-demand updates
+
+When ingesting product content, in the event that you encounter an unknown reference – i.e., a new location reference, booking question, tag or destination id – or, if you need to perform a currency conversion for which the last exchange rate you retrieved has expired, we expect you to call the relevant endpoint to resolve the new reference immediately or just after completing the product content update.
+Endpoint 	When to update
+/exchange-rates 	Whenever you encounter a currency that you need to convert, but the last-retrieved exchange-rate for that currency-pair is no longer valid due to having expired (according to the expiry value in the response from this endpoint)
+/locations/bulk 	Whenever you encounter a location reference code that you do not yet have the details for (we recommend retrieving location details in batches using this endpoint; therefore, the retrieval of new location data can commence after all new product content is retrieved)
+/products/tags 	Whenever you encounter a tag reference code that you do not yet have the details for
+/destinations 	Whenever you encounter a destination id that you do not yet have the details for
+/products/booking-questions 	Whenever you encounter a booking question identifier that you do not yet have the details for
+/attractions/{attraction-id} 	Whenever you encounter an attraction identifier that you do not yet have the details for
+/reviews/product 	If the number of reviews available for a product, which is reported in the reviews.totalReviews element in the product content response, has changed compared with its previous value, the reviews for that product should also be refreshed by calling the /reviews/product endpoint. We request that you rate-limit your use of this service to 30 requests per minute.
+/bookings/status 	Whenever you encounter a booking waiting for manual confirmation. Must not be called more than once every 3 minutes.

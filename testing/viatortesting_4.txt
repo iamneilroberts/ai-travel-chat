@@ -1,0 +1,16 @@
+Starting Viator API Tests...
+
+
+Test 4: Testing single product retrieval...
+✓ Successfully retrieved tour 5010SYDNEY
+Tour details: {
+  title: 'Big Bus Sydney and Bondi Hop-on Hop-off Tour',
+  location: {
+    city: 'Unknown',
+    country: 'Unknown',
+    coordinates: { lat: 0, lon: 0 }
+  },
+  duration: 'Unknown'
+}
+
+Requested tests completed successfully! ✨

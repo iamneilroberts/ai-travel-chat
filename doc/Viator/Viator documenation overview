@@ -1,0 +1,32 @@
+***Viator documentation and reference 
+**folders
+*documentation: contains main API documentation
+*reference: detailed specifics about critical operations
+*implementation guide: contains details for setting up and using the viator API
+*tags: Viator tag system explained. 
+
+Internet links:
+https://docs.viator.com/partner-api/technical/#section/Key-concepts
+https://partnerresources.viator.com/travel-commerce/tags/
+https://partnerresources.viator.com/travel-commerce/technical-guide/
+
+
+Golden Path
+R
+Get acquainted with our API & API documentation
+
+Understand what endpoints you have access to – because you have basic access to our API, you only have access to certain endpoints. You can see which endpoints you have access to here. You may not need to use all endpoints. If you follow our Golden Path, you will only need to use:
+Endpoint 	Description 	Why it’s useful
+/product/search 	Pulls product summaries based on search criteria 	This endpoint is ideal for where short product summaries would be ideal, such as product previews on search results or destination pages.
+/v1/taxonomy/destinations 	Gets details of all destinations, such as destination names and parent identifiers 	Provide navigation on your site, through drilldown lists, combo boxes, or breadcrumbs.
+/products/tags 	Get details for all tags 	We categorize all products by using tags. Tags are useful to providing more context to your customers and by organizing products by category. 
+R
+Familiarize yourself with what information you can request
+
+In your request to /products/search endpoint, you’ll provide which destination you want to pull products for and will indicate how you want those products sorted in the response (e.g. sort requested products by price in descending order).
+
+See example request to /products/search endpoint →
+R
+Familiar yourself with what types of information the API returns
+
+This will be useful when planning out the layout and design of your pages. For example, in the /product/search response, we return such information as images, tour descriptions, review ratings, and pricing. Ask yourself: how will I present this information/functionality on my site so my customers can easily find the right tour or activity for them?

@@ -1,0 +1,133 @@
+/reviews/product
+
+Retrieves and filters reviews for a single product Reviews should be cached and refreshed weekly, as well as on-demand when you see that the product content endpoint returns a different review count than saved in your database for the product.
+
+Non-indexing of reviews
+
+    Review content is protected proprietary information; therefore, you may not allow review content to be indexed by search engines. In order for your site to be certified, you will need to demonstrate that you have implemented systems to ensure that review content is non-indexed. For more information, see Key concepts - Protecting unique content.
+
+Availability of reviews
+
+    Occasionally, reviews are deleted due to inauthenticity, offensive language, etc. Furthermore, we cannot guarantee that non-Viator reviews (i.e., those for which the provider is not "VIATOR") will remain available in future (however, you will receive a notification email to inform you should this occurr). As such, we require that you implement a mechanism by which locally-cached reviews are automatically deleted from your records (and are not displayed on your site) if they do not appear in the most recent response from this endpoint.
+
+Viator performs checks on reviews
+
+    For more information, see Key concepts - Review authenticity
+
+Authorizations:
+API-key
+header Parameters
+Accept-Language
+required
+	
+string
+Example: en-US
+
+Specifies the language into which the natural-language fields in the response from this service will be translated (see Accept-Language header for available language codes)
+Accept
+required
+	
+string
+Example: application/json;version=2.0
+
+Specifies the version of this API to access
+Request Body schema: application/json;version=2.0
+productCode
+required
+	
+string
+
+Retrieve reviews for the product identified by this product code
+count
+required
+	
+integer <int32>
+
+Number of reviews to be returned in the response; used for pagination
+start
+required
+	
+integer <int32>
+
+Position of first review to be returned in the response; used for pagination
+provider
+required
+	
+string
+
+Limit the reviews returned in the response to those associated with this provider; one of:
+
+    "VIATOR" – only include reviews submitted on viator.com
+    "TRIPDADVISOR" – only include reviews submitted on tripdavisor.com
+    "ALL" - include reviews from all providers
+
+sortBy	
+string
+
+One of:
+
+    "HIGHEST_RATING_PER_LOCALE" – sort by rating (descending) for each locale
+    "MOST_RECENT_PER_LOCALE" – sort by publication date (descending) for each locale
+    "MOST_HELPFUL_PER_LOCALE" – sort by the number of 'helpful' votes (descending) for each locale
+    "HIGHEST_RATING" – sort by rating (descending) across all locales
+    "MOST_RECENT" – sort by publication date (descending) across all locales
+    "MOST_HELPFUL" – sort by the number of 'helpful' votes (descending) across all locales
+
+If this element is omitted, the default sort option is "MOST_RECENT"
+reviewsForNonPrimaryLocale	
+boolean
+
+Set to true to include reviews submitted by users from locales that are not the primary locale as given in the Accept-Language header parameter.
+showMachineTranslated	
+boolean
+
+Set to true to include machine-translated reviews.
+ratings	
+Array of integers <int32> [ items <int32 > ]
+
+Only include reviews with these ratings
+
+Example: [3,4,5] to receive reviews with a rating of 3 or above
+Responses
+Response Headers X-Unique-ID
+required
+	
+string
+
+Tracking identifier for this response. Please include the value of this field when making help requests.
+
+    Example: "0A871A13:DE2A_0A8712F9:01BB_5DCCC98C_260DAA:0D5B"
+
+RateLimit-Limit
+required
+	
+string
+
+Total limit of requests for this endpoint for a given window. For informational purposes only.
+RateLimit-Remaining
+required
+	
+string
+
+Remaining requests for this endpoint for a given window. For informational purposes only
+RateLimit-Reset
+required
+	
+string
+
+The fixed window in time, in seconds, which represents when a limit is fully replenished. For informational purposes only.
+Response Schema: application/json;version=2.0
+required
+	
+Array of objects (ProductReview)
+
+Reviews and review metadata for this product, from start to (start+count)
+required
+	
+object
+
+Summary of the set of all reviews available for this product
+object
+
+Summary of the set of reviews available for this product filtered by provider, ratings, reviewsForNonPrimaryLocale and showMachineTranslated in the request
+
