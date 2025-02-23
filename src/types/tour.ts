@@ -17,13 +17,6 @@ export interface ViatorPriceRange {
   currency: string;
 }
 
-export interface TourBookingInfo {
-  confirmationType: 'INSTANT' | 'ON_REQUEST';
-  minTravelers?: number;
-  maxTravelers?: number;
-  bookingQuestions?: string[];
-}
-
 export interface TourWithParsedJson {
   id: string;
   tourId: string;
@@ -35,16 +28,6 @@ export interface TourWithParsedJson {
   categories: string[];
   duration: string;
   priceRange: ViatorPriceRange;
-  
-  // Basic Additional Info
-  inclusions: string[];
-  exclusions: string[];
-  highlights: string[];
-  languages: string[];
-  accessibility: string[];
-  tags: number[];
-  productUrl: string;
-  bookingInfo: TourBookingInfo;
   
   // Review data
   reviewCount: number;

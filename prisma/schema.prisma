@@ -22,16 +22,6 @@ model Tour {
   duration       String   // Proper duration format
   priceRange     Json     // Enhanced pricing info
   
-  // Basic Additional Info
-  inclusions     String[] // What's included
-  exclusions     String[] // What's not included
-  highlights     String[] // Key features
-  languages      String[] // Available languages
-  accessibility  String[] // Accessibility features
-  tags           Int[]    // Viator tag IDs
-  productUrl     String   // Viator booking URL with partner IDs
-  bookingInfo    Json     // Confirmation settings, requirements
-  
   // Review data
   reviewCount    Int      @default(0)
   ratingAvg      Float    @default(0)

@@ -62,7 +62,8 @@ class ViatorTourIngestionService {
   }
 
   private convertToInputJson(obj: any): Prisma.InputJsonValue {
-    return JSON.parse(JSON.stringify(obj));
+    const converted = JSON.parse(JSON.stringify(obj));
+    return converted as Prisma.InputJsonValue;
   }
 
   private async saveTourToDatabase(tour: Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
@@ -74,17 +75,9 @@ class ViatorTourIngestionService {
         location: this.convertToInputJson(tour.location),
         ratings: tour.ratings,
         reviews: tour.reviews,
-        categories: tour.categories,
+        categories: { set: tour.categories },
         duration: tour.duration,
         priceRange: this.convertToInputJson(tour.priceRange),
-        inclusions: tour.inclusions,
-        exclusions: tour.exclusions,
-        highlights: tour.highlights,
-        languages: tour.languages,
-        accessibility: tour.accessibility,
-        tags: tour.tags,
-        productUrl: tour.productUrl,
-        bookingInfo: this.convertToInputJson(tour.bookingInfo),
         reviewCount: tour.reviewCount,
         ratingAvg: tour.ratingAvg,
         status: tour.status,
@@ -103,26 +96,24 @@ class ViatorTourIngestionService {
     }
   }
 
-  async bulkIngestTours(): Promise<void> {
-    console.log('Starting bulk tour ingestion...');
-    
-    for (const region of Object.keys(REGION_MAPPING)) {
-      await this.ingestToursByRegion(region);
-    }
-  }
-
   async close(): Promise<void> {
     await this.prisma.$disconnect();
   }
 }
 
 async function main() {
+  const region = process.argv[2];
+  if (!region || !REGION_MAPPING[region]) {
+    console.error('Please provide a valid region:', Object.keys(REGION_MAPPING).join(', '));
+    process.exit(1);
+  }
+
   const ingestionService = new ViatorTourIngestionService();
   
   try {
-    await ingestionService.bulkIngestTours();
+    await ingestionService.ingestToursByRegion(region);
   } catch (error) {
-    console.error('Bulk ingestion failed:', error);
+    console.error(`Error ingesting tours for ${region}:`, error);
   } finally {
     await ingestionService.close();
   }

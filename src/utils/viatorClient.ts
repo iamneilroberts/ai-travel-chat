@@ -2,8 +2,7 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import { 
   ViatorLocation, 
   ViatorPriceRange, 
-  TourWithParsedJson,
-  TourBookingInfo
+  TourWithParsedJson
 } from '../types/tour';
 
 interface ViatorApiConfig {
@@ -20,9 +19,6 @@ interface ViatorProductData {
   title: string;
   description: string;
   timeZone?: string;
-  bookingConfirmationSettings?: {
-    confirmationType: string;
-  };
   // Optional location fields for future extensibility
   location?: {
     city?: string;
@@ -109,13 +105,6 @@ export class ViatorClient {
       currency: "USD"
     }
 
-    const defaultBookingInfo: TourBookingInfo = {
-      confirmationType: data.bookingConfirmationSettings?.confirmationType as 'INSTANT' | 'ON_REQUEST' || 'ON_REQUEST',
-      minTravelers: undefined,
-      maxTravelers: undefined,
-      bookingQuestions: []
-    }
-
     return {
       tourId: data.productCode || "unknown",
       title: data.title,
@@ -126,23 +115,9 @@ export class ViatorClient {
       categories: [],
       duration: data.timeZone || "Unknown", // Use timeZone if available
       priceRange: defaultPriceRange,
-      
-      // Basic Additional Info
-      inclusions: [],
-      exclusions: [],
-      highlights: [],
-      bookingInfo: defaultBookingInfo,
-      languages: [],
-      accessibility: [],
-      tags: [],
-      productUrl: '', // Will be populated later
-      
-      // Review data
       reviewCount: 0,
       ratingAvg: 0,
-      
-      // Metadata
-      status: data.status || 'ACTIVE',
+      status: data.status || 'INACTIVE',
       region: this.determineRegion(defaultLocation),
       lastSync: new Date()
     }

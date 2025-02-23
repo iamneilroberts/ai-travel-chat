@@ -1,12 +1,13 @@
 # Changes Log
 
 2025-02-23:
-- Simplified Viator tour data model to resolve schema issues:
+- Simplified tour schema to resolve database issues:
   - Removed problematic JSONB[] array for images
   - Removed optional JSON fields (schedule, itinerary, reviewsData)
+  - Removed additional fields (inclusions, exclusions, highlights, etc.)
   - Added default values for required fields
-  - Updated TypeScript types and Prisma schema
-  - Modified ViatorClient and ingestion script to match simplified schema
+  - Updated TypeScript types to match simplified schema
+  - Modified ViatorClient and ingestion script
   - Created new migration for schema changes
 
 - Enhanced Viator tour data model with more comprehensive fields:
