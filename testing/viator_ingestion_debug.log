@@ -1,0 +1,9 @@
+Starting tour ingestion for UK...
+Fetching tour details from Viator API...
+Tour details received: {
+  tourId: '5010SYDNEY',
+  title: 'Big Bus Sydney and Bondi Hop-on Hop-off Tour',
+  region: 'Other'
+}
+Determined region: Other
+Skipping tour - region mismatch (Other != UK)

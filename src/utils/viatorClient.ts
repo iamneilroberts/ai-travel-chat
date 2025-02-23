@@ -80,10 +80,10 @@ export class ViatorClient {
   private transformTourData(data: ViatorProductData): Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'> {
     // Hardcoded location mapping for known tours
     const locationMap: { [key: string]: ViatorLocation } = {
-      '5010SYDNEY': {
-        city: 'Sydney',
-        country: 'Australia',
-        coordinates: { lat: -33.8688, lon: 151.2093 }
+      '2065LHR': {
+        city: 'London',
+        country: 'United Kingdom',
+        coordinates: { lat: 51.5074, lon: -0.1278 }
       }
     };
 
@@ -126,12 +126,24 @@ export class ViatorClient {
   // Fetch a single tour by ID
   async getTour(tourId: string): Promise<Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'> | null> {
     try {
+      console.log(`Fetching tour details for ${tourId}...`);
       const response = await this.client.get<ViatorProductData>(`/products/${tourId}`);
+      
       if (!response.data) {
+        console.log('No data received from API');
         return null;
       }
       
-      return this.transformTourData(response.data);
+      console.log('API Response:', {
+        productCode: response.data.productCode,
+        title: response.data.title,
+        location: response.data.location
+      });
+      
+      const transformedData = this.transformTourData(response.data);
+      console.log('Transformed tour data:', transformedData);
+      
+      return transformedData;
     } catch (error) {
       console.error(`Error fetching tour ${tourId}:`, error);
       return null;
@@ -147,8 +159,8 @@ export class ViatorClient {
       // Calculate start and end indices for pagination
       const start = (page - 1) * limit;
       
-      // For testing, just get a single product
-      const productCode = '5010SYDNEY';  // Sydney Hop-On Hop-Off Tour
+      // For testing, use a London tour
+      const productCode = '2065LHR';  // London tour
       
       const response = await this.client.get<ViatorProductData>(
         `/products/${productCode}`

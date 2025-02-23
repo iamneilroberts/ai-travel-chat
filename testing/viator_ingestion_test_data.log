@@ -1,0 +1,12 @@
+Starting tour ingestion for UK...
+Preparing tour data for database...
+Converting to JSON: {
+  city: 'London',
+  country: 'United Kingdom',
+  coordinates: { lat: 51.5074, lon: -0.1278 }
+}
+Converting to JSON: { min: 25, max: 50, currency: 'GBP' }
+Upserting tour to database...
+prisma:info Starting a postgresql pool with 9 connections.
+prisma:query INSERT INTO "public"."Tour" ("id","tourId","title","description","location","ratings","reviews","categories","duration","priceRange","reviewCount","ratingAvg","status","region","lastSync","updatedAt","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) ON CONFLICT ("tourId") DO UPDATE SET "tourId" = $18, "title" = $19, "description" = $20, "location" = $21, "ratings" = $22, "reviews" = $23, "categories" = $24, "duration" = $25, "priceRange" = $26, "reviewCount" = $27, "ratingAvg" = $28, "status" = $29, "region" = $30, "lastSync" = $31, "updatedAt" = $32 WHERE ("public"."Tour"."tourId" = $33 AND 1=1) RETURNING "public"."Tour"."id", "public"."Tour"."tourId", "public"."Tour"."title", "public"."Tour"."description", "public"."Tour"."location", "public"."Tour"."ratings", "public"."Tour"."reviews", "public"."Tour"."categories", "public"."Tour"."duration", "public"."Tour"."priceRange", "public"."Tour"."reviewCount", "public"."Tour"."ratingAvg", "public"."Tour"."status", "public"."Tour"."region", "public"."Tour"."lastSync", "public"."Tour"."updatedAt", "public"."Tour"."createdAt"
+Successfully saved tour: London City Walking Tour
