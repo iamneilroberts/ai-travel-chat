@@ -24,6 +24,11 @@ class ViatorTourIngestionService {
     }
   }
 
+  async testConnection(): Promise<boolean> {
+    console.log('Testing Viator API connection...');
+    return await this.viatorClient.testConnection();
+  }
+
   private async saveTourToDatabase(tour: Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
     try {
       console.log('Preparing tour data for database...');
@@ -166,6 +171,12 @@ async function main() {
   const ingestionService = new ViatorTourIngestionService();
   
   try {
+    // Test API connection first
+    console.log('Testing API connection...');
+    const isConnected = await ingestionService.testConnection();
+    if (!isConnected) {
+      throw new Error('Failed to connect to Viator API');
+    }
     if (command === 'init') {
       // Initialize the full catalog
       console.log('Initializing full product catalog...');

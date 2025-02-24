@@ -1,0 +1,54 @@
+Using sandbox Viator API key for development
+Initializing Viator client: {
+  baseUrl: 'https://api.sandbox.viator.com/partner',
+  maskedKey: 'e87bfe1f...cdf1',
+  environment: 'sandbox'
+}
+Testing API connection...
+Testing Viator API connection...
+Testing Viator API connection...
+API connection test successful: { status: 200, statusText: '', dataReceived: true }
+Sample destination: {
+  destinationId: 23725,
+  name: 'Placencia',
+  type: 'CITY',
+  parentDestinationId: 746,
+  lookupId: '9.746.23725',
+  destinationUrl: 'https://shop.live.rc.viator.com/x/d23725-ttd?mcid=42383&pid=P00136790&medium=api&api_version=2.0',
+  defaultCurrencyCode: 'USD',
+  timeZone: 'America/Belize',
+  countryCallingCode: '+501',
+  languages: [ 'en-BZ' ],
+  center: { latitude: 16.521055, longitude: -88.370202 }
+}
+Initializing full product catalog...
+Starting initial catalog ingestion...
+Viator API Error: {
+  status: 403,
+  statusText: '',
+  data: {
+    code: 'FORBIDDEN',
+    message: 'Endpoint access denied',
+    timestamp: '2025-02-24T04:22:43.900154457Z',
+    trackingId: '2D1167EB:A0BA_0A5D0F7E:01BB_67BBF413_5CC8E:3467C7'
+  },
+  url: '/products/modified-since',
+  headers: Object [AxiosHeaders] {
+    Accept: 'application/json;version=2.0',
+    'Content-Type': 'application/json',
+    'exp-api-key': 'e87bfe1f-975f-431a-b2fe-c3b49d0dcdf1',
+    'Accept-Language': 'en-US',
+    'Accept-Encoding': 'gzip',
+    'User-Agent': 'AI-Travel-Chat/1.0'
+  }
+}
+Error during catalog initialization: Error: Viator API error: Endpoint access denied
+    at ViatorClient.getModifiedProducts (/home/neil/dev/ai-travel-chat/src/utils/viatorClient.ts:388:15)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ViatorTourIngestionService.initializeCatalog (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:78:24)
+    at async main (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:183:7)
+Error in main: Error: Viator API error: Endpoint access denied
+    at ViatorClient.getModifiedProducts (/home/neil/dev/ai-travel-chat/src/utils/viatorClient.ts:388:15)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ViatorTourIngestionService.initializeCatalog (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:78:24)
+    at async main (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:183:7)

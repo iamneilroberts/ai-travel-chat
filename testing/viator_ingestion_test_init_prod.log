@@ -1,0 +1,37 @@
+Using production Viator API key
+Initializing Viator client: {
+  baseUrl: 'https://api.viator.com/partner',
+  maskedKey: '5dbdd384...fa03',
+  environment: 'production'
+}
+Initializing full product catalog...
+Starting initial catalog ingestion...
+Viator API Error: {
+  status: 403,
+  statusText: '',
+  data: {
+    code: 'FORBIDDEN',
+    message: 'Endpoint access denied',
+    timestamp: '2025-02-24T04:18:50.266918703Z',
+    trackingId: '2D1167EB:CA8C_0A280EB3:01BB_67BBF32A_2694FA4:261330'
+  },
+  url: '/products/modified-since',
+  headers: Object [AxiosHeaders] {
+    Accept: 'application/json;version=2.0',
+    'Content-Type': 'application/json',
+    'exp-api-key': '5dbdd384-1d90-42bf-a500-6544e1eafa03',
+    'Accept-Language': 'en-US',
+    'Accept-Encoding': 'gzip',
+    'User-Agent': 'AI-Travel-Chat/1.0'
+  }
+}
+Error during catalog initialization: Error: Viator API error: Endpoint access denied
+    at ViatorClient.getModifiedProducts (/home/neil/dev/ai-travel-chat/src/utils/viatorClient.ts:371:15)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ViatorTourIngestionService.initializeCatalog (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:73:24)
+    at async main (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:172:7)
+Error in main: Error: Viator API error: Endpoint access denied
+    at ViatorClient.getModifiedProducts (/home/neil/dev/ai-travel-chat/src/utils/viatorClient.ts:371:15)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ViatorTourIngestionService.initializeCatalog (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:73:24)
+    at async main (/home/neil/dev/ai-travel-chat/scripts/ingestViatorTours.ts:172:7)

@@ -22,9 +22,6 @@ export class TourService {
       categories: tourData.categories,
       duration: tourData.duration,
       priceRange: tourData.priceRange as Prisma.InputJsonValue,
-      schedule: tourData.schedule 
-        ? (tourData.schedule as Prisma.InputJsonValue)
-        : Prisma.JsonNull,
     };
 
     const tour = await prisma.tour.create({
@@ -61,9 +58,6 @@ export class TourService {
       categories: tourData.categories,
       duration: tourData.duration,
       priceRange: tourData.priceRange as Prisma.InputJsonValue,
-      schedule: tourData.schedule 
-        ? (tourData.schedule as Prisma.InputJsonValue)
-        : Prisma.JsonNull,
       updatedAt: new Date(),
     };
 
@@ -138,9 +132,6 @@ export class TourService {
           categories: data.categories,
           duration: data.duration,
           priceRange: data.priceRange as Prisma.InputJsonValue,
-          schedule: data.schedule 
-            ? (data.schedule as Prisma.InputJsonValue)
-            : Prisma.JsonNull,
         };
 
         return prisma.tour.upsert({

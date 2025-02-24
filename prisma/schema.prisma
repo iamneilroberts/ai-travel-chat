@@ -18,7 +18,7 @@ model Tour {
   location       Json     // Enhanced with full address, pickup points
   ratings        Float
   reviews        Int
-  categories     String[] // Using Viator tags
+  categories     String[] // Human-readable categories derived from tags
   duration       String   // Proper duration format
   priceRange     Json     // Enhanced pricing info
   
@@ -26,10 +26,36 @@ model Tour {
   reviewCount    Int      @default(0)
   ratingAvg      Float    @default(0)
   
+  // Tag relationships
+  tags           TourTag[]
+  rawTagIds      Int[]    // Store original Viator tag IDs
+  
   // Metadata
   status         String   @default("ACTIVE")
   region         String   @default("UNKNOWN")
   lastSync       DateTime @default(now())
   updatedAt      DateTime @updatedAt
   createdAt      DateTime @default(now())
+}
+
+model Tag {
+  id            Int       @id
+  name          String    // English name
+  parentIds     Int[]    // IDs of parent tags
+  tours         TourTag[]
+  lastUpdated   DateTime  @default(now())
+  
+  @@index([id])
+}
+
+// Junction table for many-to-many relationship between Tours and Tags
+model TourTag {
+  tour      Tour     @relation(fields: [tourId], references: [id])
+  tourId    String
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  tagId     Int
+
+  @@id([tourId, tagId])
+  @@index([tourId])
+  @@index([tagId])
 }

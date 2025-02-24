@@ -40,3 +40,31 @@ export interface TourWithParsedJson {
   updatedAt: Date;
   createdAt: Date;
 }
+
+// Type alias for Prisma Tour model
+export type Tour = TourWithParsedJson;
+
+// Search parameters for filtering tours
+export interface TourSearchParams {
+  location?: string;
+  categories?: string[];
+  minRating?: number;
+  maxPrice?: number;
+}
+
+// Helper functions for JSON field handling
+export const parseTourJson = (tour: any): TourWithParsedJson => {
+  return {
+    ...tour,
+    location: typeof tour.location === 'string' ? JSON.parse(tour.location) : tour.location,
+    priceRange: typeof tour.priceRange === 'string' ? JSON.parse(tour.priceRange) : tour.priceRange,
+  };
+};
+
+export const stringifyTourJson = (tour: TourWithParsedJson): any => {
+  return {
+    ...tour,
+    location: typeof tour.location === 'object' ? JSON.stringify(tour.location) : tour.location,
+    priceRange: typeof tour.priceRange === 'object' ? JSON.stringify(tour.priceRange) : tour.priceRange,
+  };
+};

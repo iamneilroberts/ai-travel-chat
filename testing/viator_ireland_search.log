@@ -1,0 +1,24 @@
+=== Ireland Tours Search Test ===
+
+[2025-02-23T22:01:35.400Z] Connection test: Successful
+[2025-02-23T22:01:35.400Z] 
+=== Searching for term: Ireland ===
+[2025-02-23T22:01:35.592Z] No results found for "Ireland"
+[2025-02-23T22:01:35.592Z] 
+=== Searching for term: Dublin ===
+[2025-02-23T22:01:35.692Z] No results found for "Dublin"
+[2025-02-23T22:01:35.692Z] 
+=== Searching for term: Irish ===
+[2025-02-23T22:01:35.792Z] No results found for "Irish"
+[2025-02-23T22:01:35.793Z] 
+=== Searching for term: Republic of Ireland ===
+[2025-02-23T22:01:35.888Z] No results found for "Republic of Ireland"
+[2025-02-23T22:01:35.888Z] 
+=== Searching for term: Belfast ===
+[2025-02-23T22:01:36.005Z] No results found for "Belfast"
+[2025-02-23T22:01:36.006Z] 
+=== Searching for term: Galway ===
+[2025-02-23T22:01:36.100Z] No results found for "Galway"
+[2025-02-23T22:01:36.100Z] 
+=== Searching for term: Cork ===
+[2025-02-23T22:01:36.203Z] No results found for "Cork"

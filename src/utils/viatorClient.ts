@@ -10,6 +10,18 @@ interface ViatorApiConfig {
   baseUrl: string;
 }
 
+interface ViatorTag {
+  tagId: number;
+  parentTagIds?: number[];
+  allNamesByLocale: {
+    [locale: string]: string;
+  };
+}
+
+interface TagsResponse {
+  tags: ViatorTag[];
+}
+
 interface ViatorProductData {
   status: string;
   bookingConfirmationSettings: {
@@ -18,8 +30,6 @@ interface ViatorProductData {
     confirmationType: string;
     bookingCutoffFixedTime?: string;
   };
-  // Add other fields from the Viator API response
-  // that we might need in the future
   productCode: string;
   language: string;
   createdAt: string;
@@ -35,6 +45,7 @@ interface ViatorProductData {
       lon: number;
     };
   };
+  tags?: number[];
 }
 
 interface ViatorBulkProductResponse {
@@ -65,14 +76,18 @@ interface ViatorAvailabilityResponse {
 
 interface SearchType {
   searchType: 'PRODUCTS' | 'DESTINATIONS' | 'ATTRACTIONS';
+  pagination?: {
+    start: number;
+    // Maximum allowed count per request is 50
+    // See: https://docs.viator.com/partner-api/technical/pagination/
+    count: number;
+  };
 }
 
 interface FreetextSearchRequest {
   searchTerm: string;
   currency: string;
   searchTypes: Array<SearchType>;
-  start: number;
-  count: number;
   productFiltering?: {
     destinationIds?: string[];
     locationIds?: string[];
@@ -104,16 +119,21 @@ export interface FreetextSearchProduct {
     currency: string;
   };
   duration?: string;
+  tags?: number[];
 }
 
 interface FreetextSearchResponse {
   products?: {
-    data: FreetextSearchProduct[];
+    totalCount: number;
+    results: FreetextSearchProduct[];
   };
 }
 
 export class ViatorClient {
   private client: AxiosInstance;
+  private environment: 'sandbox' | 'production';
+  private accessLevel: 'basic' | 'full' | 'merchant' = 'basic';
+  private allowedEndpoints: Set<string>;
   
   constructor(config: ViatorApiConfig) {
     this.client = axios.create({
@@ -124,16 +144,62 @@ export class ViatorClient {
         'Content-Type': 'application/json',
         'Accept-Language': 'en-US',
         'Accept': 'application/json;version=2.0',
-        'Accept-Encoding': 'gzip'
+        'Accept-Encoding': 'gzip',
+        'User-Agent': 'AI-Travel-Chat/1.0'
       },
     });
+
+    // Initialize environment and endpoint access
+    this.environment = config.baseUrl.includes('sandbox') ? 'sandbox' : 'production';
+    this.allowedEndpoints = new Set([
+      '/destinations',
+      '/attractions/search',
+      '/products/search',
+      '/search/freetext',
+      '/locations/bulk',
+      '/products/tags',
+      '/products/{product-code}',
+      '/products/bulk'
+    ]);
+  }
+
+  // Get all available tags
+  async getTags(): Promise<TagsResponse> {
+    try {
+      console.log('Fetching Viator tags...');
+      const response = await this.client.get<TagsResponse>('/products/tags');
+      const tags = response.data.tags || [];
+      console.log(`Retrieved ${tags.length} tags`);
+      return { tags };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Viator API Error:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url
+        });
+        throw new Error(`Failed to fetch tags: ${error.response?.data?.message || error.message}`);
+      }
+      throw error;
+    }
   }
 
   // Test API connectivity using the destinations endpoint
   async testConnection(): Promise<boolean> {
     try {
+      console.log('Testing Viator API connection...');
       const response = await this.client.get('/destinations');
-      console.log('API test response:', response.data);
+      console.log('API connection test successful:', {
+        status: response.status,
+        statusText: response.statusText,
+        dataReceived: !!response.data
+      });
+      if (!response.data) {
+        console.warn('API connection successful but no data received');
+        return false;
+      }
+      // Log first destination as a sample
+      console.log('Sample destination:', response.data.destinations?.[0] || 'No destinations found');
       return true;
     } catch (error) {
       console.error('API test error:', error);
@@ -194,12 +260,31 @@ export class ViatorClient {
 
   // Initialize the client with environment variables
   static initialize(): ViatorClient {
-    const apiKey = process.env.VIATOR_API_KEY;
-    const baseUrl = process.env.VIATOR_BASE_URL || 'https://api.sandbox.viator.com/partner';
-
-    if (!apiKey) {
-      throw new Error('Missing required Viator API configuration');
+    const sandboxKey = process.env.VIATOR_API_KEY_SANDBOX;
+    const productionKey = process.env.VIATOR_API_KEY_PRODUCTION;
+    
+    let apiKey: string;
+    let baseUrl: string;
+    
+    // Prefer sandbox for development unless explicitly configured for production
+    if (sandboxKey && process.env.VIATOR_USE_PRODUCTION !== 'true') {
+      console.log('Using sandbox Viator API key for development');
+      apiKey = sandboxKey;
+      baseUrl = 'https://api.sandbox.viator.com/partner';
+    } else if (productionKey) {
+      console.log('Using production Viator API key');
+      apiKey = productionKey;
+      baseUrl = 'https://api.viator.com/partner';
+    } else {
+      throw new Error(
+        'Missing required Viator API configuration. Please set VIATOR_API_KEY_SANDBOX for development.'
+      );
     }
+
+    // Log API configuration (without exposing the full key)
+    const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4);
+    const environment = baseUrl.includes('sandbox') ? 'sandbox' : 'production';
+    console.log('Initializing Viator client:', { baseUrl, maskedKey, environment });
 
     return new ViatorClient({
       apiKey,
@@ -217,32 +302,45 @@ export class ViatorClient {
     count?: number;
     currency?: string;
   } = {}): Promise<FreetextSearchResponse | null> {
+    // Validate pagination count
+    const requestedCount = options.count || 10;
+    if (requestedCount < 1 || requestedCount > 50) {
+      throw new Error(
+        'Invalid pagination count. Value must be between 1 and 50.'
+      );
+    }
+    const requestData: FreetextSearchRequest = {
+      searchTerm,
+      currency: options.currency || 'USD',
+      searchTypes: [{
+        searchType: 'PRODUCTS',
+        pagination: {
+          start: options.start || 1,
+          count: requestedCount
+        }
+      }],
+      productSorting: {
+        sortBy: options.sortBy || 'RELEVANCE',
+        sortOrder: 'ASC'
+      }
+    };
+
+    // Only add filtering if we have values
+    if (options.destinationIds?.length || options.locationIds?.length || options.categories?.length) {
+      requestData.productFiltering = {
+        ...(options.destinationIds?.length && { destinationIds: options.destinationIds }),
+        ...(options.locationIds?.length && { locationIds: options.locationIds }),
+        ...(options.categories?.length && { categories: options.categories })
+      };
+    }
+
     try {
       console.log(`Performing freetext search for "${searchTerm}"...`);
+      console.log('Request data:', JSON.stringify(requestData, null, 2));
       
-      const data: FreetextSearchRequest = {
-        searchTerm,
-        currency: options.currency || 'USD',
-        start: options.start || 1,
-        count: options.count || 50,
-        searchTypes: [{
-          searchType: 'PRODUCTS'
-        }],
-        productFiltering: {
-          ...(options.destinationIds && { destinationIds: options.destinationIds }),
-          ...(options.locationIds && { locationIds: options.locationIds }),
-          ...(options.categories && { categories: options.categories })
-        },
-        ...(options.sortBy && {
-          productSorting: {
-            sortBy: options.sortBy,
-            sortOrder: options.sortBy === 'PRICE_HIGH_TO_LOW' ? 'DESC' : 'ASC'
-          }
-        })
-      };
-
-      const response = await this.client.post<FreetextSearchResponse>('/search/freetext', data);
-      console.log(`Found ${response.data.products?.data.length || 0} results`);
+      const response = await this.client.post<FreetextSearchResponse>('/search/freetext', requestData);
+      console.log('Response:', JSON.stringify(response.data, null, 2));
+      console.log(`Found ${response.data.products?.totalCount || 0} total results`);
       
       return response.data;
     } catch (error) {
@@ -250,10 +348,12 @@ export class ViatorClient {
         console.error('Viator API Error:', {
           status: error.response.status,
           data: error.response.data,
-          headers: error.response.headers
+          headers: error.response.headers,
+          request: requestData
         });
+        throw new Error(`Viator API error: ${error.response.data?.message || error.message}`);
       }
-      return null;
+      throw error;
     }
   }
 
@@ -278,6 +378,52 @@ export class ViatorClient {
     }
   }
 
+  // Get details for a specific set of products using bulk endpoint
+  async getBulkProducts(productCodes: string[]): Promise<{
+    products: Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'>[];
+  }> {
+    try {
+      if (productCodes.length === 0) {
+        return { products: [] };
+      }
+
+      if (productCodes.length > 500) {
+        console.warn('Warning: Maximum of 500 products can be requested at once. Truncating list.');
+        productCodes = productCodes.slice(0, 500);
+      }
+
+      console.log(`Fetching details for ${productCodes.length} products using bulk endpoint...`);
+      
+      const response = await this.client.post<ViatorBulkProductResponse>(
+        '/products/bulk',
+        { productCodes }
+      );
+
+      const products = Object.values(response.data.products)
+        .filter(product => {
+          // Filter out inactive and non-instant confirmation products
+          return product.status === 'ACTIVE' && 
+                 product.bookingConfirmationSettings?.confirmationType === 'INSTANT';
+        })
+        .map(product => this.transformTourData(product));
+
+      console.log(`Successfully retrieved ${products.length} products`);
+      return { products };
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Viator API Error:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          url: error.config?.url
+        });
+        throw new Error(`Viator API error: ${error.response?.data?.message || error.message}`);
+      }
+      throw error;
+    }
+  }
+
   // Fetch modified products with pagination
   async getModifiedProducts(options: {
     modifiedSince?: string;
@@ -288,6 +434,14 @@ export class ViatorClient {
     nextCursor?: string;
   }> {
     try {
+      // Check if endpoint is allowed for current access level
+      if (this.accessLevel === 'basic' && this.environment === 'production') {
+        throw new Error(
+          'The /products/modified-since endpoint requires Full-access or Merchant level API access. ' +
+          'Please contact Viator to upgrade your access level.'
+        );
+      }
+
       const {
         modifiedSince,
         cursor,
@@ -317,8 +471,6 @@ export class ViatorClient {
           return product.status === 'ACTIVE' && 
                  product.bookingConfirmationSettings?.confirmationType === 'INSTANT';
         })
-        .filter(product => product.status === 'ACTIVE' && 
-                          product.bookingConfirmationSettings?.confirmationType === 'INSTANT')
         .map(product => this.transformTourData(product));
 
       return {
@@ -326,8 +478,19 @@ export class ViatorClient {
         nextCursor: response.data.nextCursor
       };
     } catch (error) {
-      console.error('Error fetching modified products:', error);
-      return { products: [] };
+      if (axios.isAxiosError(error)) {
+        console.error('Viator API Error:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          url: error.config?.url,
+          headers: error.config?.headers
+        });
+        throw new Error(`Viator API error: ${error.response?.data?.message || error.message}`);
+      } else {
+        console.error('Unknown error fetching modified products:', error);
+        throw error;
+      }
     }
   }
 
