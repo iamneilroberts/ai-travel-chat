@@ -1,6 +1,14 @@
 # Changes Log
 
 2025-02-24:
+- Enhanced Viator tag system with AI-powered categorization:
+  - Added description and significance fields to Tag model
+  - Implemented smart tag categorization based on predefined categories and keywords
+  - Created ingestViatorTags.ts script for automated tag processing
+  - Added support for generating AI-friendly tag descriptions
+  - Enhanced tag metadata for better tour recommendations
+  - Successfully processed and categorized 1,247 Viator tags
+
 - Fixed ESLint and TypeScript issues for Vercel deployment:
   - Added ESLint configuration for TypeScript and React Hook rules
   - Fixed hook dependency warnings in ProgressIndicator and PromptSelector
