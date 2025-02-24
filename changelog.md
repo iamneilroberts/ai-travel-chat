@@ -1,6 +1,30 @@
 # Changes Log
 
 2025-02-23:
+- Enhanced Viator tour ingestion with bulk loading:
+  - Added getModifiedProducts method to ViatorClient for bulk product retrieval
+  - Added bookingConfirmationSettings to product data interface
+  - Added filtering for INSTANT confirmation products only
+  - Added cursor storage functionality for tracking ingestion progress
+  - Added new initialization command for full catalog ingestion
+  - Implemented pagination handling with cursor-based navigation
+  - Added date range filtering for product ingestion
+  - Simplified ingestion script to remove region filtering
+  - Added progress logging for bulk operations
+  - Fixed TypeScript issues with tour data handling
+  - Added proper error handling and logging
+  - Updated ingestion process to follow Viator's recommended approach
+  - Added support for storing and retrieving last cursor position
+  - Enhanced error handling with detailed logging
+
+- Added Ireland tour testing functionality:
+  - Added freetext search capability to ViatorClient
+  - Created interfaces for freetext search request/response
+  - Implemented searchTours method with filtering options
+  - Created testIrelandTours.ts script for exploring Irish tours
+  - Added comprehensive logging for search results
+  - Set up test infrastructure for analyzing tour data
+
 - Fixed tour schema and ingestion issues:
   - Simplified tour schema by removing problematic fields
   - Removed image arrays and optional JSON fields

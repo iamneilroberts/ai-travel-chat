@@ -12,6 +12,14 @@ interface ViatorApiConfig {
 
 interface ViatorProductData {
   status: string;
+  bookingConfirmationSettings: {
+    bookingCutoffType: string;
+    bookingCutoffInMinutes: number;
+    confirmationType: string;
+    bookingCutoffFixedTime?: string;
+  };
+  // Add other fields from the Viator API response
+  // that we might need in the future
   productCode: string;
   language: string;
   createdAt: string;
@@ -19,7 +27,6 @@ interface ViatorProductData {
   title: string;
   description: string;
   timeZone?: string;
-  // Optional location fields for future extensibility
   location?: {
     city?: string;
     country?: string;
@@ -36,6 +43,15 @@ interface ViatorBulkProductResponse {
   };
 }
 
+interface ModifiedSinceResponse {
+  products: ViatorProductData[];
+  nextCursor?: string;
+}
+
+interface ProductsResponse {
+  products: ViatorProductData[];
+}
+
 interface ViatorAvailabilityResponse {
   data: {
     available: boolean;
@@ -44,6 +60,55 @@ interface ViatorAvailabilityResponse {
       price: number;
       currency: string;
     }>;
+  };
+}
+
+interface SearchType {
+  searchType: 'PRODUCTS' | 'DESTINATIONS' | 'ATTRACTIONS';
+}
+
+interface FreetextSearchRequest {
+  searchTerm: string;
+  currency: string;
+  searchTypes: Array<SearchType>;
+  start: number;
+  count: number;
+  productFiltering?: {
+    destinationIds?: string[];
+    locationIds?: string[];
+    categories?: string[];
+  };
+  productSorting?: {
+    sortBy: 'RELEVANCE' | 'PRICE_LOW_TO_HIGH' | 'PRICE_HIGH_TO_LOW' | 'RATING';
+    sortOrder: 'ASC' | 'DESC';
+  };
+}
+
+export interface FreetextSearchProduct {
+  productCode: string;
+  title: string;
+  description?: string;
+  location?: {
+    id: string;
+    name: string;
+    destinationId: string;
+    coordinates?: {
+      lat: number;
+      lon: number;
+    };
+  };
+  categories?: string[];
+  price?: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  duration?: string;
+}
+
+interface FreetextSearchResponse {
+  products?: {
+    data: FreetextSearchProduct[];
   };
 }
 
@@ -78,123 +143,34 @@ export class ViatorClient {
 
   // Transform Viator API response to our tour format
   private transformTourData(data: ViatorProductData): Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'> {
-    // Hardcoded location mapping for known tours
-    const locationMap: { [key: string]: ViatorLocation } = {
-      '2065LHR': {
-        city: 'London',
-        country: 'United Kingdom',
-        coordinates: { lat: 51.5074, lon: -0.1278 }
-      }
+    const location = {
+      city: data.location?.city || "Unknown",
+      country: data.location?.country || "Unknown",
+      coordinates: data.location?.coordinates || { lat: 0, lon: 0 }
     };
 
-    const defaultLocation: ViatorLocation = 
-      locationMap[data.productCode] || {
-        city: data.location?.city || "Unknown",
-        country: data.location?.country || "Unknown",
-        coordinates: data.location?.coordinates 
-          ? { 
-              lat: data.location.coordinates.lat, 
-              lon: data.location.coordinates.lon 
-            } 
-          : { lat: 0, lon: 0 }
-      };
-
-    const defaultPriceRange: ViatorPriceRange = {
+    const priceRange = {
       min: 0,
       max: 0,
       currency: "USD"
-    }
+    };
 
     return {
       tourId: data.productCode || "unknown",
       title: data.title,
       description: data.description,
-      location: defaultLocation,
+      location: location,
       ratings: 0,
       reviews: 0,
       categories: [],
-      duration: data.timeZone || "Unknown", // Use timeZone if available
-      priceRange: defaultPriceRange,
+      duration: data.timeZone || "Unknown",
+      priceRange: priceRange,
       reviewCount: 0,
       ratingAvg: 0,
       status: data.status || 'INACTIVE',
-      region: this.determineRegion(defaultLocation),
+      region: this.determineRegion(location),
       lastSync: new Date()
-    }
-  }
-
-  // Fetch a single tour by ID
-  async getTour(tourId: string): Promise<Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'> | null> {
-    try {
-      console.log(`Fetching tour details for ${tourId}...`);
-      const response = await this.client.get<ViatorProductData>(`/products/${tourId}`);
-      
-      if (!response.data) {
-        console.log('No data received from API');
-        return null;
-      }
-      
-      console.log('API Response:', {
-        productCode: response.data.productCode,
-        title: response.data.title,
-        location: response.data.location
-      });
-      
-      const transformedData = this.transformTourData(response.data);
-      console.log('Transformed tour data:', transformedData);
-      
-      return transformedData;
-    } catch (error) {
-      console.error(`Error fetching tour ${tourId}:`, error);
-      return null;
-    }
-  }
-
-  // Fetch multiple tours (with pagination)
-  async getTours(page: number = 1, limit: number = 100): Promise<{
-    tours: Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'>[];
-    hasMore: boolean;
-  }> {
-    try {
-      // Calculate start and end indices for pagination
-      const start = (page - 1) * limit;
-      
-      // For testing, use a London tour
-      const productCode = '2065LHR';  // London tour
-      
-      const response = await this.client.get<ViatorProductData>(
-        `/products/${productCode}`
-      );
-
-      // Log a concise summary instead of the full response
-      console.log('Tour Summary:', {
-        productCode: response.data.productCode,
-        title: response.data.title,
-        status: response.data.status,
-        lastUpdated: response.data.lastUpdatedAt
-      });
-      
-      if (!response.data) {
-        return { tours: [], hasMore: false };
-      }
-
-      const tours = [this.transformTourData(response.data)];
-      
-      // For testing, we'll just return one tour
-      const hasMore = false;
-      return {
-        tours,
-        hasMore
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        console.error('Error fetching tours:', axiosError.response?.data || axiosError.message);
-      } else {
-        console.error('Error fetching tours:', error);
-      }
-      return { tours: [], hasMore: false };
-    }
+    };
   }
 
   // Helper method to determine region based on location
@@ -231,30 +207,158 @@ export class ViatorClient {
     });
   }
 
-  // Check tour availability for a specific date and time
-  async checkAvailability(tourId: string, date: string, time?: string): Promise<{
-    available: boolean;
-    price: number;
-    currency: string;
-  } | null> {
+  // Perform a freetext search for tours
+  async searchTours(searchTerm: string, options: {
+    destinationIds?: string[];
+    locationIds?: string[];
+    categories?: string[];
+    sortBy?: 'RELEVANCE' | 'PRICE_LOW_TO_HIGH' | 'PRICE_HIGH_TO_LOW' | 'RATING';
+    start?: number;
+    count?: number;
+    currency?: string;
+  } = {}): Promise<FreetextSearchResponse | null> {
     try {
-      const response = await this.client.get<ViatorAvailabilityResponse>(
-        `/availability/schedules/${tourId}`,
-        {
-          params: { date, time },
-        }
+      console.log(`Performing freetext search for "${searchTerm}"...`);
+      
+      const data: FreetextSearchRequest = {
+        searchTerm,
+        currency: options.currency || 'USD',
+        start: options.start || 1,
+        count: options.count || 50,
+        searchTypes: [{
+          searchType: 'PRODUCTS'
+        }],
+        productFiltering: {
+          ...(options.destinationIds && { destinationIds: options.destinationIds }),
+          ...(options.locationIds && { locationIds: options.locationIds }),
+          ...(options.categories && { categories: options.categories })
+        },
+        ...(options.sortBy && {
+          productSorting: {
+            sortBy: options.sortBy,
+            sortOrder: options.sortBy === 'PRICE_HIGH_TO_LOW' ? 'DESC' : 'ASC'
+          }
+        })
+      };
+
+      const response = await this.client.post<FreetextSearchResponse>('/search/freetext', data);
+      console.log(`Found ${response.data.products?.data.length || 0} results`);
+      
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('Viator API Error:', {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+      }
+      return null;
+    }
+  }
+
+  // Store the last cursor for future updates
+  private async storeLastCursor(cursor: string): Promise<void> {
+    try {
+      const fs = await import('fs/promises');
+      await fs.writeFile('.viator-cursor', cursor);
+      console.log('Stored last cursor for future updates');
+    } catch (error) {
+      console.error('Error storing cursor:', error);
+    }
+  }
+
+  // Retrieve the last stored cursor
+  private async getLastCursor(): Promise<string | undefined> {
+    try {
+      const fs = await import('fs/promises');
+      return await fs.readFile('.viator-cursor', 'utf-8');
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  // Fetch modified products with pagination
+  async getModifiedProducts(options: {
+    modifiedSince?: string;
+    cursor?: string;
+    count?: number;
+  } = {}): Promise<{
+    products: Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'>[];
+    nextCursor?: string;
+  }> {
+    try {
+      const {
+        modifiedSince,
+        cursor,
+        count = 500 // Default to max allowed
+      } = options;
+
+      const params: Record<string, string> = {
+        count: count.toString()
+      };
+
+      if (cursor) {
+        params.cursor = cursor;
+      }
+
+      if (modifiedSince) {
+        params['modified-since'] = encodeURIComponent(modifiedSince);
+      }
+
+      const response = await this.client.get<ModifiedSinceResponse>(
+        '/products/modified-since',
+        { params }
       );
 
-      const schedule = response.data.data.schedules[0];
-      return schedule ? {
-        available: schedule.available,
-        price: schedule.price,
-        currency: 'USD', // Default to USD, can be updated based on API response
-      } : null;
+      const transformedProducts = response.data.products
+        .filter(product => {
+          // Filter out inactive and non-instant confirmation products
+          return product.status === 'ACTIVE' && 
+                 product.bookingConfirmationSettings?.confirmationType === 'INSTANT';
+        })
+        .filter(product => product.status === 'ACTIVE' && 
+                          product.bookingConfirmationSettings?.confirmationType === 'INSTANT')
+        .map(product => this.transformTourData(product));
 
+      return {
+        products: transformedProducts,
+        nextCursor: response.data.nextCursor
+      };
     } catch (error) {
-      console.error(`Error checking availability for tour ${tourId}:`, error);
-      return null;
+      console.error('Error fetching modified products:', error);
+      return { products: [] };
+    }
+  }
+
+  // Initialize product catalog without date range
+  async initializeProductCatalog(): Promise<void> {
+    try {
+      console.log('Initializing product catalog...');
+      let hasMore = true;
+      let cursor: string | undefined;
+      let totalProcessed = 0;
+
+      while (hasMore) {
+        const result = await this.getModifiedProducts({
+          count: 500,
+          cursor
+        });
+
+        totalProcessed += result.products.length;
+        console.log(`Processed ${result.products.length} products (Total: ${totalProcessed})`);
+
+        if (result.nextCursor) {
+          cursor = result.nextCursor;
+          await this.storeLastCursor(cursor);
+        } else {
+          hasMore = false;
+          console.log('Reached end of product catalog');
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing product catalog:', error);
+      throw error;
     }
   }
 }

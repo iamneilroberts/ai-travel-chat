@@ -1,64 +1,16 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 import { ViatorClient } from '../src/utils/viatorClient';
-import { 
-  TourWithParsedJson, 
-  ViatorLocation 
-} from '../src/types/tour';
-
-// Test data for UK tour
-const TEST_TOUR: Omit<TourWithParsedJson, 'id' | 'createdAt' | 'updatedAt'> = {
-  tourId: 'TEST-LONDON-1',
-  title: 'London City Walking Tour',
-  description: 'Explore the historic streets of London with a knowledgeable guide.',
-  location: {
-    city: 'London',
-    country: 'United Kingdom',
-    coordinates: { lat: 51.5074, lon: -0.1278 }
-  },
-  ratings: 4.5,
-  reviews: 100,
-  categories: ['Walking Tours', 'Historical Tours'],
-  duration: '3 hours',
-  priceRange: {
-    min: 25,
-    max: 50,
-    currency: 'GBP'
-  },
-  reviewCount: 100,
-  ratingAvg: 4.5,
-  status: 'ACTIVE',
-  region: 'UK',
-  lastSync: new Date()
-};
+import { TourWithParsedJson } from '../src/types/tour';
 
 class ViatorTourIngestionService {
   private prisma: PrismaClient;
+  private viatorClient: ViatorClient;
 
   constructor() {
     this.prisma = new PrismaClient({
       log: ['query', 'info', 'warn', 'error'],
     });
-  }
-
-  // Determine region based on country
-  private determineRegion(country: string): string {
-    const REGION_MAPPING: { [key: string]: string[] } = {
-      'UK': ['United Kingdom', 'England', 'Scotland', 'Wales', 'Northern Ireland'],
-      'Ireland': ['Ireland', 'Republic of Ireland'],
-      'Italy': ['Italy'],
-      'France': ['France'],
-      'Caribbean': [
-        'Jamaica', 'Bahamas', 'Dominican Republic', 'Puerto Rico', 
-        'Cuba', 'Barbados', 'Trinidad and Tobago', 'Cayman Islands'
-      ]
-    };
-
-    for (const [region, countries] of Object.entries(REGION_MAPPING)) {
-      if (countries.includes(country)) {
-        return region;
-      }
-    }
-    return 'Other';
+    this.viatorClient = ViatorClient.initialize();
   }
 
   private convertToInputJson(obj: any): Prisma.InputJsonValue {
@@ -88,7 +40,7 @@ class ViatorTourIngestionService {
         reviewCount: tour.reviewCount,
         ratingAvg: tour.ratingAvg,
         status: tour.status,
-        region: this.determineRegion(tour.location.country),
+        region: tour.region,
         lastSync: new Date()
       };
 
@@ -109,22 +61,89 @@ class ViatorTourIngestionService {
     }
   }
 
-  async ingestToursByRegion(region: string): Promise<void> {
-    console.log(`Starting tour ingestion for ${region}...`);
+  async initializeCatalog(): Promise<void> {
+    console.log('Starting initial catalog ingestion...');
     
     try {
-      // For testing, use our test tour data
-      if (region === 'UK') {
-        await this.saveTourToDatabase(TEST_TOUR);
-      } else {
-        console.log(`No test data available for region: ${region}`);
+      let cursor: string | undefined;
+      let totalIngested = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const result = await this.viatorClient.getModifiedProducts({
+          cursor,
+          count: 500
+        });
+
+        for (const tour of result.products) {
+          await this.saveTourToDatabase(tour);
+          totalIngested++;
+        }
+
+        console.log(`Processed ${result.products.length} tours (Total: ${totalIngested})`);
+        
+        hasMore = !!result.nextCursor;
+        cursor = result.nextCursor;
       }
     } catch (error) {
-      console.error(`Error ingesting tours for ${region}:`, error);
+      console.error('Error during catalog initialization:', error);
+      throw error;
+    }
+  }
+
+  async ingestToursByDateRange(startDate?: string, endDate?: string): Promise<void> {
+    console.log(`Starting tour ingestion from ${startDate}${endDate ? ` to ${endDate}` : ''}...`);
+    
+    try {
+      let cursor: string | undefined;
+      let totalIngested = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        // Get modified products with pagination
+        const result = await this.viatorClient.getModifiedProducts({
+          modifiedSince: startDate,
+          cursor: cursor,
+          count: 500 // Maximum allowed per request
+        });
+
+        // Process the products
+        for (const tour of result.products) {
+          await this.saveTourToDatabase(tour);
+          totalIngested++;
+
+          // Log progress every 100 tours
+          if (totalIngested % 100 === 0) {
+            console.log(`Processed ${totalIngested} tours so far...`);
+          }
+        }
+
+        // Check if we have more pages
+        if (result.nextCursor) {
+          cursor = result.nextCursor;
+          console.log(`Processed ${result.products.length} tours. Moving to next page...`);
+        } else {
+          hasMore = false;
+        }
+
+        // If endDate is specified and we've reached it, stop ingesting
+        if (endDate && result.products.length > 0) {
+          const lastTour = result.products[result.products.length - 1];
+          if (lastTour.lastSync && new Date(lastTour.lastSync) > new Date(endDate)) {
+            console.log(`Reached end date ${endDate}. Stopping ingestion.`);
+            break;
+          }
+        }
+      }
+
+      console.log(`Completed ingestion. Total tours processed: ${totalIngested}`);
+    } catch (error) {
+      console.error('Error during tour ingestion:', error);
       if (error instanceof Error) {
         console.error('Error details:', error.message);
         console.error('Error stack:', error.stack);
       }
+      throw error;
     }
   }
 
@@ -134,20 +153,34 @@ class ViatorTourIngestionService {
 }
 
 async function main() {
-  const region = process.argv[2];
-  const validRegions = ['UK', 'Ireland', 'Italy', 'France', 'Caribbean'];
-  
-  if (!region || !validRegions.includes(region)) {
-    console.error('Please provide a valid region:', validRegions.join(', '));
-    process.exit(1);
+  const startDate = process.argv[2];
+  const endDate = process.argv[3]; 
+  const command = process.argv[2]; // Allow for different commands
+
+  // Validate date format if provided
+  if (startDate && startDate !== 'init' && !startDate.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/)) {
+    console.error('If provided, start date must be in ISO format (e.g., 2025-02-23T00:00:00Z)');
+    process.exit(1); 
   }
 
   const ingestionService = new ViatorTourIngestionService();
   
   try {
-    await ingestionService.ingestToursByRegion(region);
+    if (command === 'init') {
+      // Initialize the full catalog
+      console.log('Initializing full product catalog...');
+      await ingestionService.initializeCatalog();
+    } else if (startDate) {
+      // Use date-based ingestion
+      console.log('Running date-based ingestion...');
+      await ingestionService.ingestToursByDateRange(startDate, endDate);
+    } else {
+      console.error('Please specify either "init" to initialize the catalog or provide a start date');
+      process.exit(1);
+    }
+    console.log('Ingestion completed successfully');
   } catch (error) {
-    console.error(`Error ingesting tours for ${region}:`, error);
+    console.error('Error in main:', error);
     process.exit(1);
   } finally {
     await ingestionService.close();
