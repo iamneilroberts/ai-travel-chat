@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { SystemPrompt, PromptLoader } from '@/utils/promptLoader';
 
 interface PromptSelectorProps {
@@ -14,11 +14,7 @@ export function PromptSelector({ onPromptChange, className = '' }: PromptSelecto
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPrompts();
-  }, []);
-
-  const loadPrompts = async () => {
+  const loadPrompts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -35,7 +31,11 @@ export function PromptSelector({ onPromptChange, className = '' }: PromptSelecto
     } finally {
       setLoading(false);
     }
-  };
+  }, [onPromptChange]);
+
+  useEffect(() => {
+    loadPrompts();
+  }, [loadPrompts]);
 
   const handlePromptSelect = async (promptPath: string) => {
     try {

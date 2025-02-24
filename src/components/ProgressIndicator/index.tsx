@@ -60,7 +60,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     return () => {
       if (animationFrame) cancelAnimationFrame(animationFrame);
     };
-  }, [duration, onComplete]);
+  }, [duration, onComplete, commandType]);
 
   return (
     <div className="w-full max-w-md mx-auto">

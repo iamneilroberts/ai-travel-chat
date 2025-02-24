@@ -6,15 +6,18 @@ export const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    // Check localStorage and system preference on mount
+    // Initialize theme from localStorage or system preference
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     setIsDark(savedTheme === 'dark' || (!savedTheme && systemPrefersDark));
-    
-    // Apply initial theme
-    document.documentElement.classList.toggle('dark', isDark);
   }, []);
+
+  // Apply theme whenever isDark changes
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [isDark]);
+
 
   const toggleTheme = () => {
     const newTheme = !isDark;

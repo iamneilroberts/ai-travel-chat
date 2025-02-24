@@ -1,7 +1,6 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { 
   ViatorLocation, 
-  ViatorPriceRange, 
   TourWithParsedJson
 } from '../types/tour';
 
@@ -57,21 +56,6 @@ interface ViatorBulkProductResponse {
 interface ModifiedSinceResponse {
   products: ViatorProductData[];
   nextCursor?: string;
-}
-
-interface ProductsResponse {
-  products: ViatorProductData[];
-}
-
-interface ViatorAvailabilityResponse {
-  data: {
-    available: boolean;
-    schedules: Array<{
-      available: boolean;
-      price: number;
-      currency: string;
-    }>;
-  };
 }
 
 interface SearchType {
@@ -373,7 +357,7 @@ export class ViatorClient {
     try {
       const fs = await import('fs/promises');
       return await fs.readFile('.viator-cursor', 'utf-8');
-    } catch (error) {
+    } catch (_error) {
       return undefined;
     }
   }
