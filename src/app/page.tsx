@@ -1,9 +1,7 @@
 'use client';
 
-import { Layout } from '@/components/NewChatInterface/Layout';
+import Layout from '@/components/Layout';
 
 export default function Home() {
-  return (
-    <Layout />
-  );
+  return <Layout />;
 }
