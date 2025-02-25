@@ -1,44 +1,44 @@
-# Changes Log
+# Changelog
 
 2025-02-24:
-- Enhanced Viator tag system with AI-powered categorization:
-  - Added description and significance fields to Tag model
-  - Implemented smart tag categorization based on predefined categories and keywords
-  - Created ingestViatorTags.ts script for automated tag processing
-  - Added support for generating AI-friendly tag descriptions
-  - Enhanced tag metadata for better tour recommendations
-  - Successfully processed and categorized 1,247 Viator tags
+- Created new modern chat interface based on Claude and ChatGPT designs:
+  - Implemented split-screen layout with chat on left and content panel on right
+  - Added welcome screen with command reference and usage examples
+  - Created responsive chat message bubbles with markdown support
+  - Implemented user input with send button and keyboard shortcuts
+  - Added progress indicator animation for API calls
+  - Created trip options display with accept/edit/reject functionality
+  - Added theme toggle for dark/light mode
+  - Implemented model selector and system prompt selector
+  - Added trip details viewer with edit capability
+  - Created HTML content viewer for travel documents
+  - Designed mobile-friendly responsive layout
+  - Added welcome HTML file with styled command reference
 
-- Fixed ESLint and TypeScript issues for Vercel deployment:
-  - Added ESLint configuration for TypeScript and React Hook rules
-  - Fixed hook dependency warnings in ProgressIndicator and PromptSelector
-  - Fixed type issues in useTripAlternatives hook
-  - Added .npmrc for legacy peer dependencies
-  - Upgraded Monaco editor for React 19 compatibility
+- Modernized chat interface styling:
+  - Added Inter font for better typography
+  - Enhanced layout with proper spacing and gradients
+  - Improved dark mode colors and contrast
+  - Added subtle shadows and rounded corners
+  - Updated button and input styling
+  - Refined content layout with consistent padding
+  - Added proper spacing between sections
+  - Enhanced blockquote and code block styling
+  - Improved list item presentation
+  - Added header with app title
+  - Added theme toggle in header
+  - Improved right column readability
+  - Added responsive design improvements
+  - Fixed message bubble styling
+  - Added proper font hierarchy
+  - Enhanced visual separation between sections
+  - Improved overall user experience with better visual feedback
 
-- Fixed Viator search pagination issues:
-  - Updated searchTours count parameter to respect 50-item limit
-  - Added validation in ViatorClient for pagination parameters
-  - Added documentation about API pagination limits
-  - Updated test script to use correct pagination values
-
-- Enhanced Viator tag handling and tour data storage:
-  - Added Tag and TourTag models to Prisma schema
-  - Implemented tag relationship tracking in database
-  - Added support for storing raw tag IDs from Viator
-  - Added tag synchronization functionality
-  - Enhanced tour data transformation with tag relationships
-  - Added proper handling of tour-tag associations
-  - Updated test script to fetch and store tag data
-
-- Implemented and tested Viator freetext search functionality:
-  - Created testViatorSearch.ts script to verify API functionality
-  - Successfully tested API connectivity and search endpoint
-  - Added proper duration transformation for different duration formats
-  - Implemented tour data transformation and database storage
-  - Added detailed logging of API responses
-  - Fixed TypeScript type issues with API response handling
-  - Successfully saved London tours to database
-
-2025-02-23:
-[Previous entries remain unchanged...]
+- Added Viator tag models and ingestion:
+  - Created tag database schema
+  - Added tag description fields
+  - Implemented tag ingestion script
+  - Added tag relationships to tours
+  - Updated database schema for better tag support
+  - Added tag-based filtering capabilities
+  - Improved tour categorization

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to AI Travel Chat</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color, #333);
+      background-color: var(--bg-color, #fff);
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      padding: 1rem;
+    }
+    
+    h1, h2, h3 {
+      color: var(--heading-color, #111);
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 1.5rem;
+      border-bottom: 1px solid var(--border-color, #eaeaea);
+      padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+      font-size: 1.2rem;
+      margin-top: 1.2rem;
+    }
+    
+    ul {
+      padding-left: 1.5rem;
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+    
+    code {
+      background-color: var(--code-bg, #f5f5f5);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.9em;
+    }
+    
+    .command-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    
+    .command-card {
+      border: 1px solid var(--border-color, #eaeaea);
+      border-radius: 8px;
+      padding: 1rem;
+      background-color: var(--card-bg, #f9f9f9);
+    }
+    
+    .command-name {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    
+    .example-queries {
+      background-color: var(--card-bg, #f9f9f9);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .emoji {
+      font-size: 1.2rem;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-color: #e0e0e0;
+        --heading-color: #ffffff;
+        --bg-color: #1a1a1a;
+        --border-color: #333;
+        --code-bg: #2a2a2a;
+        --card-bg: #252525;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <span class="emoji">🌎</span>
+      Welcome to AI Travel Chat
+    </h1>
+    
+    <p>Let's plan your perfect trip together. I'm here to help you create personalized travel itineraries, find activities, and generate useful travel documents.</p>
+    
+    <h2>Trip Planning Commands</h2>
+    
+    <div class="command-list">
+      <div class="command-card">
+        <span class="command-name"><code>/new</code></span>
+        <span>Start a new trip planning session</span>
+        <div><small>Example: <code>/new 7 day trip to Ireland October 2025, two adults</code></small></div>
+      </div>
+      
+      <div class="command-card">
+        <span class="command-name"><code>/select [1-3]</code></span>
+        <span>Choose from generated trip options</span>
+        <div><small>Example: <code>/select 2</code></small></div>
+      </div>
+      
+      <div class="command-card">
+        <span class="command-name"><code>/build</code></span>
+        <span>Create detailed itinerary from selected option</span>
+      </div>
+      
+      <div class="command-card">
+        <span class="command-name"><code>/update</code></span>
+        <span>Update existing trip details</span>
+        <div><small>Example: <code>/update add extra day in Paris</code></small></div>
+      </div>
+      
+      <div class="command-card">
+        <span class="command-name"><code>/describe</code></span>
+        <span>Get detailed information about a place or activity</span>
+        <div><small>Example: <code>/describe Cliffs of Moher</code></small></div>
+      </div>
+    </div>
+    
+    <h2>Document Generation</h2>
+    
+    <div class="command-list">
+      <div class="command-card">
+        <span class="command-name"><code>/pdf proposal</code></span>
+        <span>Generate formal trip proposal</span>
+      </div>
+      
+      <div class="command-card">
+        <span class="command-name"><code>/pdf location guide</code></span>
+        <span>Create detailed location guide</span>
+      </div>
+      
+      <div class="command-card">
+        <span class="command-name"><code>/mobile guide</code></span>
+        <span>Get mobile-optimized travel guide</span>
+      </div>
+    </div>
+    
+    <h2>What I Can Help With</h2>
+    
+    <div class="feature-grid">
+      <div class="feature-item">
+        <span class="emoji">✈️</span>
+        <span>Trip planning and itineraries</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">🏨</span>
+        <span>Accommodation recommendations</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">🎯</span>
+        <span>Activity suggestions</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">🚗</span>
+        <span>Transportation planning</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">📝</span>
+        <span>Travel document creation</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">🍽️</span>
+        <span>Dining recommendations</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">🛍️</span>
+        <span>Shopping district guides</span>
+      </div>
+      
+      <div class="feature-item">
+        <span class="emoji">📱</span>
+        <span>Mobile-friendly guides</span>
+      </div>
+    </div>
+    
+    <h2>Example Queries</h2>
+    
+    <div class="example-queries">
+      <ul>
+        <li>"Plan a 5-day trip to Tokyo for two adults in spring 2025"</li>
+        <li>"Find food tours and cooking classes in Paris"</li>
+        <li>"Create a family-friendly itinerary for London"</li>
+        <li>"What are the best areas to stay in Barcelona for nightlife?"</li>
+        <li>"I need a 10-day road trip through California"</li>
+        <li>"Help me plan a romantic weekend in Venice"</li>
+      </ul>
+    </div>
+    
+    <p style="margin-top: 2rem; text-align: center;">
+      Need help? Just ask! 😊
+    </p>
+  </div>
+</body>
+</html>
